@@ -17,15 +17,15 @@ import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADE
 import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
 import static datawave.microservice.config.web.Constants.RESPONSE_ORIGIN_HEADER;
 
-public class ResponseHeaderFilter extends OncePerRequestFilter {
+public class ResponseHeaderServletFilter extends OncePerRequestFilter {
     private final String origin;
     
-    public ResponseHeaderFilter(String systemName) {
+    public ResponseHeaderServletFilter(String systemName) {
         String origin;
         try {
             origin = systemName + " / " + InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            origin = systemName + " / unknown";
+            origin = systemName + " / UNKNOWN";
         }
         this.origin = origin;
     }

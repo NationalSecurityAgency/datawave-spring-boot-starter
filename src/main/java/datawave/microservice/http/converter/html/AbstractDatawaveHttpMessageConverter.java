@@ -7,25 +7,30 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.lang.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-abstract public class AbstractHtmlProviderHttpMessageConverter<T> extends AbstractHttpMessageConverter<T> {
-    private final DatawaveServerProperties datawaveServerProperties;
+abstract public class AbstractDatawaveHttpMessageConverter<T> extends AbstractHttpMessageConverter<T> {
+    protected final DatawaveServerProperties datawaveServerProperties;
+    @Nullable
+    protected final BannerProvider bannerProvider;
     
-    public AbstractHtmlProviderHttpMessageConverter(DatawaveServerProperties datawaveServerProperties) {
+    public AbstractDatawaveHttpMessageConverter(DatawaveServerProperties datawaveServerProperties, @Nullable BannerProvider bannerProvider) {
         this.datawaveServerProperties = datawaveServerProperties;
+        this.bannerProvider = bannerProvider;
         setSupportedMediaTypes(Collections.singletonList(MediaType.TEXT_HTML));
     }
     
     @Override
-    protected boolean canRead(MediaType mediaType) {
+    protected boolean canRead(@Nullable MediaType mediaType) {
         return false;
     }
     
     @Override
+    @SuppressWarnings("ConstantConditions")
     protected T readInternal(Class<? extends T> clazz, HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
         return null;
     }
@@ -45,18 +50,23 @@ abstract public class AbstractHtmlProviderHttpMessageConverter<T> extends Abstra
     
     protected byte[] createHtml(T t) {
         
+        String headBanner = (bannerProvider != null) ? bannerProvider.getHeadBanner() : "";
+        String footBanner = (bannerProvider != null) ? bannerProvider.getFootBanner() : "";
+        
         //@formatter:off
         String builder = "<html>" +
                 "<head>" +
                     "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"/>" +
                     "<title>DATAWAVE - " + getTitle(t) + "</title>" +
-                    "<link rel='stylesheet' type='text/css' href='" + datawaveServerProperties.getCssUri() + "' media='screen' />" +
+                    "<link rel='stylesheet' type='text/css' href='" + datawaveServerProperties.getCdnUri() + "css/screen.css' media='screen' />" +
                     getHeadContent(t) +
                 "</head>" +
                 "<body>" +
+                    headBanner +
                     "<h1>" + getPageHeader(t) + "</h1>" +
                     "<div>" + getMainContent(t) + "</div>" +
                     "<br/>" +
+                    footBanner +
                 "</body>" +
                 "</html>\n";
         //@formatter:on
