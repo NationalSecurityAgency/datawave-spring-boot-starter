@@ -5,10 +5,21 @@
         <artifactId>datawave-microservice-service-parent</artifactId>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <version>1.5</version>
-        <relativePath>../service-parent</relativePath>
     </parent>
     <artifactId>spring-boot-starter-datawave</artifactId>
     <version>1.6-SNAPSHOT</version>
+    <url>https://code.nsa.gov/datawave-spring-boot-starter</url>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-spring-boot-starter.git</connection>
+        <developerConnection>scm:git:git@github.com:NationalSecurityAgency/datawave-spring-boot-starter.git</developerConnection>
+        <url>https://github.com/NationalSecurityAgency/datawave-spring-boot-starter</url>
+    </scm>
     <properties>
         <version.accumulo>1.9.2</version.accumulo>
         <version.dropwizard-metrics>3.1.5</version.dropwizard-metrics>
