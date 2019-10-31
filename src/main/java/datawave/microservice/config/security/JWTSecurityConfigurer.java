@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -97,7 +98,7 @@ public class JWTSecurityConfigurer extends WebSecurityConfigurerAdapter {
     }
     
     @Override
-    protected void configure(@Nullable AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(@NonNull AuthenticationManagerBuilder auth) throws Exception {
         Preconditions.checkNotNull(auth);
         auth.authenticationProvider(jwtAuthenticationProvider);
     }

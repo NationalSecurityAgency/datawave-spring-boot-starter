@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * A {@link org.springframework.http.converter.HttpMessageConverter} that writes a {@link VoidResponse} to HTML. This class does not support reading HTML and
  * converting to an {@link VoidResponse}.
@@ -33,7 +35,7 @@ public class VoidResponseHttpMessageConverter extends AbstractDatawaveHttpMessag
         }
         
         if (MediaType.TEXT_PLAIN.isCompatibleWith(contentType)) {
-            outputMessage.getBody().write(voidResponse.toString().getBytes());
+            outputMessage.getBody().write(voidResponse.toString().getBytes(UTF_8));
         } else {
             super.writeInternal(voidResponse, outputMessage);
         }
