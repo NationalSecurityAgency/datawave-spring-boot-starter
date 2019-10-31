@@ -10,8 +10,9 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.lang.Nullable;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 abstract public class AbstractDatawaveHttpMessageConverter<T> extends AbstractHttpMessageConverter<T> {
     protected final DatawaveServerProperties datawaveServerProperties;
@@ -30,6 +31,7 @@ abstract public class AbstractDatawaveHttpMessageConverter<T> extends AbstractHt
     }
     
     @Override
+    @Nullable
     @SuppressWarnings("ConstantConditions")
     protected T readInternal(Class<? extends T> clazz, HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
         return null;
@@ -70,6 +72,6 @@ abstract public class AbstractDatawaveHttpMessageConverter<T> extends AbstractHt
                 "</body>" +
                 "</html>\n";
         //@formatter:on
-        return builder.getBytes(StandardCharsets.UTF_8);
+        return builder.getBytes(UTF_8);
     }
 }

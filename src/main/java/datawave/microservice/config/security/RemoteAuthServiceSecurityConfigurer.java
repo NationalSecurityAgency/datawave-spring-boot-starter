@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
@@ -55,7 +55,7 @@ public class RemoteAuthServiceSecurityConfigurer extends JWTSecurityConfigurer {
     }
     
     @Override
-    protected void configure(@Nullable AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(@NonNull AuthenticationManagerBuilder auth) throws Exception {
         Preconditions.checkNotNull(auth);
         super.configure(auth);
         
