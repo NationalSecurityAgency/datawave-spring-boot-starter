@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -55,6 +56,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         headers.set(Constants.ERROR_CODE_HEADER, e.getBottomQueryException().getErrorCode());
         
         return handleExceptionInternal(e, null, headers, status, request);
+    }
+    
+    /**
+     * Handle a spring {@link AccessDeniedException} by re-throwing the exception. Otherwise, the exception would have been handled in
+     * {@link #handleGenericException(Exception, WebRequest)} and turned into a 500 error rather than a 403. While we could return a {@link VoidResponse} here
+     * too, we want the default spring processing to handle the access denied error instead.
+     */
+    @ExceptionHandler({AccessDeniedException.class})
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        throw ex;
     }
     
     /**
