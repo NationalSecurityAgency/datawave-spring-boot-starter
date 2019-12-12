@@ -3,8 +3,7 @@ package datawave.microservice.rest.exception;
 import datawave.microservice.config.web.Constants;
 import datawave.webservice.query.exception.QueryException;
 import datawave.webservice.result.VoidResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,15 +11,17 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"exceptionMapperTest", "permitAllWebTest"})
 public class RestExceptionHandlerTest {
@@ -47,7 +48,7 @@ public class RestExceptionHandlerTest {
         assertEquals(400, clientResponse.rawStatusCode());
         
         HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-        assertTrue("ErrorCode header was missing from failed result.", headers.containsKey(Constants.ERROR_CODE_HEADER));
+        assertTrue(headers.containsKey(Constants.ERROR_CODE_HEADER), "ErrorCode header was missing from failed result.");
         assertEquals(expectedErrorCode, headers.getFirst(Constants.ERROR_CODE_HEADER));
         
         VoidResponse vr = clientResponse.bodyToMono(VoidResponse.class).block();
@@ -72,7 +73,7 @@ public class RestExceptionHandlerTest {
         assertEquals(500, clientResponse.rawStatusCode());
         
         HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-        assertTrue("ErrorCode header was missing from failed result.", headers.containsKey(Constants.ERROR_CODE_HEADER));
+        assertTrue(headers.containsKey(Constants.ERROR_CODE_HEADER), "ErrorCode header was missing from failed result.");
         assertEquals(expectedErrorCode, headers.getFirst(Constants.ERROR_CODE_HEADER));
         
         VoidResponse vr = clientResponse.bodyToMono(VoidResponse.class).block();
@@ -97,7 +98,7 @@ public class RestExceptionHandlerTest {
         assertEquals(500, clientResponse.rawStatusCode());
         
         HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-        assertFalse("ErrorCode header was set from non-query failed result.", headers.containsKey(Constants.ERROR_CODE_HEADER));
+        assertFalse(headers.containsKey(Constants.ERROR_CODE_HEADER), "ErrorCode header was set from non-query failed result.");
         
         VoidResponse vr = clientResponse.bodyToMono(VoidResponse.class).block();
         assertNotNull(vr);

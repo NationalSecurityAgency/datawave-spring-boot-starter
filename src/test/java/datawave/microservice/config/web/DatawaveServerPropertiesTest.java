@@ -3,31 +3,26 @@ package datawave.microservice.config.web;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = DatawaveServerProperties.class)
 public class DatawaveServerPropertiesTest {
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-    
     private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
     
-    @Before
+    @BeforeEach
     public void setup() {
         context.register(Setup.class);
     }
@@ -83,8 +78,6 @@ public class DatawaveServerPropertiesTest {
     
     @Test
     public void testWithSslEnabledAndMissingKeyStore() {
-        expectedException.expect(BeanCreationException.class);
-        expectedException.expectCause(new CauseMessageMatcher(BindValidationException.class, "Field error in object 'server' on field 'outboundSsl.keyStore'"));
         // @formatter:off
         TestPropertyValues.of(
 //                "server.outbound-ssl.keyStore=testKeyStore",
@@ -96,14 +89,12 @@ public class DatawaveServerPropertiesTest {
         ).applyTo(context);
         // @formatter:on
         
-        context.refresh();
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.keyStore'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingKeyStorePassword() {
-        expectedException.expect(BeanCreationException.class);
-        expectedException.expectCause(
-                        new CauseMessageMatcher(BindValidationException.class, "Field error in object 'server' on field 'outboundSsl.keyStorePassword'"));
         // @formatter:off
         TestPropertyValues.of(
                 "server.outbound-ssl.keyStore=testKeyStore",
@@ -115,14 +106,12 @@ public class DatawaveServerPropertiesTest {
         ).applyTo(context);
         // @formatter:on
         
-        context.refresh();
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.keyStorePassword'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingKeyStoreType() {
-        expectedException.expect(BeanCreationException.class);
-        expectedException.expectCause(
-                        new CauseMessageMatcher(BindValidationException.class, "Field error in object 'server' on field 'outboundSsl.keyStoreType'"));
         // @formatter:off
         TestPropertyValues.of(
                 "server.outbound-ssl.keyStore=testKeyStore",
@@ -134,14 +123,12 @@ public class DatawaveServerPropertiesTest {
         ).applyTo(context);
         // @formatter:on
         
-        context.refresh();
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.keyStoreType'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingTrustStore() {
-        expectedException.expect(BeanCreationException.class);
-        expectedException.expectCause(
-                        new CauseMessageMatcher(BindValidationException.class, "Field error in object 'server' on field 'outboundSsl.trustStore'"));
         // @formatter:off
         TestPropertyValues.of(
                 "server.outbound-ssl.keyStore=testKeyStore",
@@ -153,14 +140,12 @@ public class DatawaveServerPropertiesTest {
         ).applyTo(context);
         // @formatter:on
         
-        context.refresh();
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.trustStore'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingTrustStorePassword() {
-        expectedException.expect(BeanCreationException.class);
-        expectedException.expectCause(
-                        new CauseMessageMatcher(BindValidationException.class, "Field error in object 'server' on field 'outboundSsl.trustStorePassword'"));
         // @formatter:off
         TestPropertyValues.of(
                 "server.outbound-ssl.keyStore=testKeyStore",
@@ -172,14 +157,12 @@ public class DatawaveServerPropertiesTest {
         ).applyTo(context);
         // @formatter:on
         
-        context.refresh();
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.trustStorePassword'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingTrustStoreType() {
-        expectedException.expect(BeanCreationException.class);
-        expectedException.expectCause(
-                        new CauseMessageMatcher(BindValidationException.class, "Field error in object 'server' on field 'outboundSsl.trustStoreType'"));
         // @formatter:off
         TestPropertyValues.of(
                 "server.outbound-ssl.keyStore=testKeyStore",
@@ -191,11 +174,16 @@ public class DatawaveServerPropertiesTest {
         ).applyTo(context);
         // @formatter:on
         
-        context.refresh();
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.trustStoreType'"));
     }
     
     @EnableConfigurationProperties(DatawaveServerProperties.class)
     public static class Setup {}
+    
+    private static CauseMessageMatcher bindValidationError(String message) {
+        return new CauseMessageMatcher(BindValidationException.class, message);
+    }
     
     private static class CauseMessageMatcher extends TypeSafeMatcher<Throwable> {
         private Class<?> causeClass;
@@ -213,7 +201,10 @@ public class DatawaveServerPropertiesTest {
         @Override
         protected boolean matchesSafely(Throwable throwable) {
             Throwable cause = throwable.getCause();
-            return cause != null && cause.getClass().isAssignableFrom(causeClass) && matcher.matches(cause.getMessage());
+            while (cause != null && !cause.getClass().isAssignableFrom(causeClass)) {
+                cause = cause.getCause();
+            }
+            return cause != null && matcher.matches(cause.getMessage());
         }
         
         @Override

@@ -11,12 +11,13 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+
+import static org.springframework.util.Assert.state;
 
 /**
  * An {@link org.springframework.http.converter.HttpMessageConverter} that reads/writes messages that implement the Protostuff {@link Message} interface.
@@ -69,7 +70,7 @@ public class ProtostuffHttpMessageConverter extends AbstractHttpMessageConverter
         MediaType contentType = outputMessage.getHeaders().getContentType();
         if (contentType == null) {
             contentType = getDefaultContentType(message);
-            Assert.state(contentType != null, "No content type");
+            state(contentType != null, "No content type");
         }
         
         try {

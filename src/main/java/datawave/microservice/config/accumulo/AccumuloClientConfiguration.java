@@ -24,8 +24,7 @@ public class AccumuloClientConfiguration {
     @Lazy
     @Qualifier("warehouse")
     @ConditionalOnMissingBean
-    public AccumuloClient warehouseConnector(@Qualifier("warehouse") AccumuloProperties accumuloProperties)
-                    throws AccumuloSecurityException, AccumuloException {
+    public AccumuloClient warehouseClient(@Qualifier("warehouse") AccumuloProperties accumuloProperties) throws AccumuloSecurityException, AccumuloException {
         return Accumulo.newClient().to(accumuloProperties.getInstanceName(), accumuloProperties.getZookeepers())
                         .as(accumuloProperties.getUsername(), new PasswordToken(accumuloProperties.getPassword())).build();
     }
@@ -34,7 +33,7 @@ public class AccumuloClientConfiguration {
     @Lazy
     @Qualifier("metrics")
     @ConditionalOnMissingBean
-    public AccumuloClient metricsConnector(@Qualifier("metrics") AccumuloProperties accumuloProperties) throws AccumuloSecurityException, AccumuloException {
+    public AccumuloClient metricsClient(@Qualifier("metrics") AccumuloProperties accumuloProperties) throws AccumuloSecurityException, AccumuloException {
         return Accumulo.newClient().to(accumuloProperties.getInstanceName(), accumuloProperties.getZookeepers())
                         .as(accumuloProperties.getUsername(), new PasswordToken(accumuloProperties.getPassword())).build();
     }

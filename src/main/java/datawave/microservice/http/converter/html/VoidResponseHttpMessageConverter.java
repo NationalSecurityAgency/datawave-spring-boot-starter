@@ -7,13 +7,13 @@ import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.springframework.util.Assert.state;
 
 /**
  * A {@link org.springframework.http.converter.HttpMessageConverter} that writes a {@link VoidResponse} to HTML. This class does not support reading HTML and
@@ -31,7 +31,7 @@ public class VoidResponseHttpMessageConverter extends AbstractDatawaveHttpMessag
         MediaType contentType = outputMessage.getHeaders().getContentType();
         if (contentType == null) {
             contentType = getDefaultContentType(voidResponse);
-            Assert.state(contentType != null, "No content type");
+            state(contentType != null, "No content type");
         }
         
         if (MediaType.TEXT_PLAIN.isCompatibleWith(contentType)) {
