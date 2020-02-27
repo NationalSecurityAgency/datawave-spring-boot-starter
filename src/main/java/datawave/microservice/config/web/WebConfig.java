@@ -15,6 +15,7 @@ import datawave.webservice.result.VoidResponse;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,16 +40,29 @@ import java.util.List;
 @EnableConfigurationProperties(DatawaveServerProperties.class)
 public class WebConfig {
     /**
-     * Creates a {@link JaxbAnnotationModule} bean, which will be added automatically to any {@link ObjectMapper} created by Spring.
+     * Creates a {@link JaxbAnnotationModule} bean, which will be added automatically to any {@link ObjectMapper} created by Spring. The
+     * {@link JaxbAnnotationModule} causes Jackson to honor JAX-B annotations on object when producing JSON. This default behavior can be disabled by setting
+     * the property {@code spring.jackson.module.jaxb-annotation-module} to {@code false}.
      * 
      * @return a new {@link JaxbAnnotationModule}
      */
     @Bean
+    @ConditionalOnProperty(name = "spring.jackson.module.jaxb-annotation-module", havingValue = "true", matchIfMissing = true)
     public JaxbAnnotationModule jaxbAnnotationModule() {
         return new JaxbAnnotationModule();
     }
     
+    /**
+     * Enables by default the Jackson object mapper feature {@link MapperFeature#USE_WRAPPER_NAME_AS_PROPERTY_NAME}. For annotated objects that use
+     * {@link javax.xml.bind.annotation.XmlElementWrapper}, this will use the specified name as the JSON property name rather than the value of
+     * {@link javax.xml.bind.annotation.XmlElement}. Disable by setting the property {@code spring.jackson.mapper.use-wrapper-name-as-property-name} to
+     * {@code false}.
+     *
+     * @return a {@link Jackson2ObjectMapperBuilderCustomizer} that enables the {@link MapperFeature#USE_WRAPPER_NAME_AS_PROPERTY_NAME} Jackson object mapper
+     *         feature
+     */
     @Bean
+    @ConditionalOnProperty(name = "spring.jackson.mapper.use-wrapper-name-as-property-name", havingValue = "true", matchIfMissing = true)
     public Jackson2ObjectMapperBuilderCustomizer datawaveJacksonCustomizer() {
         return c -> c.featuresToEnable(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME);
     }
