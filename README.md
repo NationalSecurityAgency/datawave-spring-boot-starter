@@ -1,5 +1,7 @@
 ## DataWave Spring Boot Starter for Microservices
 
+[![Apache License][li]][ll] ![Build Status](https://github.com/NationalSecurityAgency/datawave-spring-boot-starter/workflows/Tests/badge.svg)
+
 This is a Spring Boot "starter" class to build a DATAWAVE microservice. This
 starter provides custom default behavior that is useful for new services.
 
@@ -95,3 +97,6 @@ for displaying tables in web apps.
 
 A default [datawave banner](src/main/resources/banner.txt) for display by
 Spring at application startup.
+
+[li]: http://img.shields.io/badge/license-ASL-blue.svg
+[ll]: https://www.apache.org/licenses/LICENSE-2.0
