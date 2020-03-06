@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>spring-boot-starter-datawave</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0</version>
     <url>https://code.nsa.gov/datawave-spring-boot-starter</url>
     <licenses>
         <license>
@@ -19,7 +19,7 @@
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-spring-boot-starter.git</connection>
         <developerConnection>scm:git:git@github.com:NationalSecurityAgency/datawave-spring-boot-starter.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>2.0.0</tag>
         <url>https://github.com/NationalSecurityAgency/datawave-spring-boot-starter</url>
     </scm>
     <properties>
