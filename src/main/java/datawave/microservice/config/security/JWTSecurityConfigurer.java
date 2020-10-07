@@ -74,7 +74,6 @@ public class JWTSecurityConfigurer extends WebSecurityConfigurerAdapter {
             http.requiresChannel().anyRequest().requiresSecure();
         }
         
-        AllowedCallersFilter allowedCallersFilter = new AllowedCallersFilter(securityProperties);
         JWTAuthenticationFilter jwtFilter = new JWTAuthenticationFilter(false, authenticationManager(), authenticationEntryPoint);
         
         // Allow CORS requests
@@ -92,9 +91,14 @@ public class JWTSecurityConfigurer extends WebSecurityConfigurerAdapter {
         // Send unauthenticated people a 403 response without redirecting to a failure page
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).accessDeniedPage(null);
         // Extract principal information from incoming certificates so that we can limit access to specific DNs
+        AllowedCallersFilter allowedCallersFilter = getAllowedCallersFilter(securityProperties);
         http.addFilterBefore(allowedCallersFilter, X509AuthenticationFilter.class);
         // Allow JWT authentication
-        http.addFilterAfter(jwtFilter, AllowedCallersFilter.class);
+        http.addFilterAfter(jwtFilter, allowedCallersFilter.getClass());
+    }
+    
+    protected AllowedCallersFilter getAllowedCallersFilter(DatawaveSecurityProperties securityProperties) {
+        return new AllowedCallersFilter(securityProperties);
     }
     
     @Override
@@ -121,49 +125,4 @@ public class JWTSecurityConfigurer extends WebSecurityConfigurerAdapter {
         return authenticationEntryPoint;
     }
     
-    protected static class AllowedCallersFilter extends OncePerRequestFilter {
-        private final Logger logger = LoggerFactory.getLogger(getClass());
-        private final DatawaveSecurityProperties securityProperties;
-        
-        public AllowedCallersFilter(DatawaveSecurityProperties securityProperties) {
-            this.securityProperties = securityProperties;
-        }
-        
-        @Override
-        protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
-                        throws ServletException, IOException {
-            // Extract the client certificate, and if one is provided, validate that the caller is allowed to talk to us.
-            X509Certificate cert = extractClientCertificate(httpServletRequest);
-            if (cert != null) {
-                final SubjectIssuerDNPair dnPair = SubjectIssuerDNPair.of(cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
-                final String callerName = dnPair.toString();
-                final List<String> allowedCallers = securityProperties.getAllowedCallers();
-                if (securityProperties.isEnforceAllowedCallers() && !allowedCallers.contains(callerName)) {
-                    logger.warn("Not allowing {} to talk since it is not in the allowed list of users {}", dnPair, allowedCallers);
-                    throw new BadCredentialsException(dnPair + " is not authorized");
-                }
-            }
-            // Continue the chain to handle any other filters
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
-        }
-        
-        @Nullable
-        private X509Certificate extractClientCertificate(HttpServletRequest request) {
-            X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
-            
-            if (certs != null && certs.length > 0) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("X.509 client authentication certificate:" + certs[0]);
-                }
-                
-                return certs[0];
-            }
-            
-            if (logger.isDebugEnabled()) {
-                logger.debug("No client certificate found in request.");
-            }
-            
-            return null;
-        }
-    }
 }
