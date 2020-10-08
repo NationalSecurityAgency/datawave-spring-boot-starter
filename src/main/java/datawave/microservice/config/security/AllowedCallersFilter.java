@@ -5,7 +5,6 @@ import datawave.security.authorization.SubjectIssuerDNPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -27,16 +26,18 @@ public class AllowedCallersFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
                     throws ServletException, IOException {
-        // Extract the client certificate, and if one is provided, validate that the caller is allowed to talk to us.
-        X509Certificate cert = extractClientCertificate(httpServletRequest);
-        if (cert != null) {
-            final SubjectIssuerDNPair dnPair = SubjectIssuerDNPair.of(cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
-            final String callerName = dnPair.toString();
-            final List<String> allowedCallers = securityProperties.getAllowedCallers();
-            if (securityProperties.isEnforceAllowedCallers() && !allowedCallers.contains(callerName)) {
-                logger.warn("Not allowing {} to talk since it is not in the list of allowed callers {}", dnPair, allowedCallers);
-                httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "403 Forbidden: User not in the list of allowed users");
-                return;
+        if (securityProperties.isEnforceAllowedCallers()) {
+            // Extract the client certificate, and if one is provided, validate that the caller is allowed to talk to us.
+            X509Certificate cert = extractClientCertificate(httpServletRequest);
+            if (cert != null) {
+                final SubjectIssuerDNPair dnPair = SubjectIssuerDNPair.of(cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
+                final String callerName = dnPair.toString();
+                final List<String> allowedCallers = securityProperties.getAllowedCallers();
+                if (!allowedCallers.contains(callerName)) {
+                    logger.warn("Not allowing {} to talk since it is not in the list of allowed callers {}", dnPair, allowedCallers);
+                    httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "403 Forbidden: User not in the list of allowed users");
+                    return;
+                }
             }
         }
         // Continue the chain to handle any other filters
