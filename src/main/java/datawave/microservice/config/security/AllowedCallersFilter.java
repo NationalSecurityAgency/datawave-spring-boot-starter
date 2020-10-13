@@ -5,6 +5,11 @@ import datawave.security.authorization.SubjectIssuerDNPair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -18,30 +23,40 @@ import java.util.List;
 public class AllowedCallersFilter extends OncePerRequestFilter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final DatawaveSecurityProperties securityProperties;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
     
-    public AllowedCallersFilter(DatawaveSecurityProperties securityProperties) {
+    public AllowedCallersFilter(DatawaveSecurityProperties securityProperties, AuthenticationEntryPoint authenticationEntryPoint) {
         this.securityProperties = securityProperties;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
     
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
                     throws ServletException, IOException {
-        if (securityProperties.isEnforceAllowedCallers()) {
-            // Extract the client certificate, and if one is provided, validate that the caller is allowed to talk to us.
-            X509Certificate cert = extractClientCertificate(httpServletRequest);
-            if (cert != null) {
-                final SubjectIssuerDNPair dnPair = SubjectIssuerDNPair.of(cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
-                final String callerName = dnPair.toString();
-                final List<String> allowedCallers = securityProperties.getAllowedCallers();
-                if (!allowedCallers.contains(callerName)) {
-                    logger.warn("Not allowing {} to talk since it is not in the list of allowed callers {}", dnPair, allowedCallers);
-                    httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "403 Forbidden: User not in the list of allowed users");
-                    return;
+        try {
+            if (securityProperties.isEnforceAllowedCallers()) {
+                // Extract the client certificate, and if one is provided, validate that the caller is allowed to talk to us.
+                X509Certificate cert = extractClientCertificate(httpServletRequest);
+                if (cert != null) {
+                    final SubjectIssuerDNPair dnPair = SubjectIssuerDNPair.of(cert.getSubjectX500Principal().getName(),
+                                    cert.getIssuerX500Principal().getName());
+                    final String callerName = dnPair.toString();
+                    final List<String> allowedCallers = securityProperties.getAllowedCallers();
+                    if (!allowedCallers.contains(callerName)) {
+                        logger.warn("Not allowing {} to talk since it is not in the list of allowed callers {}", dnPair, allowedCallers);
+                        throw new BadCredentialsException(dnPair + " is not authorized");
+                    }
                 }
             }
+            // Continue the chain to handle any other filters
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } catch (AuthenticationException e) {
+            SecurityContextHolder.clearContext();
+            httpServletRequest.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, e);
+            if (authenticationEntryPoint != null) {
+                authenticationEntryPoint.commence(httpServletRequest, httpServletResponse, e);
+            }
         }
-        // Continue the chain to handle any other filters
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
     
     @Nullable
