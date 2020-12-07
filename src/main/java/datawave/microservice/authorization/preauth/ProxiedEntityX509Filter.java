@@ -128,7 +128,7 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
             ProxiedUserDetails curUsr = (ProxiedUserDetails) currentAuthentication.getPrincipal();
             ProxiedEntityPreauthPrincipal preAuthPrincipal = (ProxiedEntityPreauthPrincipal) principal;
             SubjectIssuerDNPair caller = curUsr.getPrimaryUser().getDn();
-
+            
             List<String> curNames = curUsr.getProxiedUsers().stream().map(DatawaveUser::getName).collect(Collectors.toList());
             List<String> preAuthNames = preAuthPrincipal.getProxiedEntities().stream().map(SubjectIssuerDNPair::toString).collect(Collectors.toList());
             
