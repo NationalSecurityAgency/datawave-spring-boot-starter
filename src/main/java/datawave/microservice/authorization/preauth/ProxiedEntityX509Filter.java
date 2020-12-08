@@ -51,7 +51,9 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
         this.requireProxiedEntities = requireProxiedEntities;
         this.requireIssuers = requireIssuers;
         this.authenticationEntryPoint = authenticationEntryPoint;
-        setCheckForPrincipalChanges(true);
+        // if JWTAuthenticationFilter has authenticated the user already, we should
+        // use that Authentication instead of checking for Principal changes
+        setCheckForPrincipalChanges(false);
     }
     
     @Override
@@ -122,11 +124,10 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
     protected boolean principalChanged(HttpServletRequest request, Authentication currentAuthentication) {
         Object principal = getPreAuthenticatedPrincipal(request);
         
-        if (currentAuthentication.getCredentials() instanceof SubjectIssuerDNPair && currentAuthentication.getPrincipal() instanceof ProxiedUserDetails
-                        && principal instanceof ProxiedEntityPreauthPrincipal) {
+        if (currentAuthentication.getPrincipal() instanceof ProxiedUserDetails && principal instanceof ProxiedEntityPreauthPrincipal) {
             ProxiedUserDetails curUsr = (ProxiedUserDetails) currentAuthentication.getPrincipal();
             ProxiedEntityPreauthPrincipal preAuthPrincipal = (ProxiedEntityPreauthPrincipal) principal;
-            SubjectIssuerDNPair caller = (SubjectIssuerDNPair) currentAuthentication.getCredentials();
+            SubjectIssuerDNPair caller = curUsr.getPrimaryUser().getDn();
             
             List<String> curNames = curUsr.getProxiedUsers().stream().map(DatawaveUser::getName).collect(Collectors.toList());
             List<String> preAuthNames = preAuthPrincipal.getProxiedEntities().stream().map(SubjectIssuerDNPair::toString).collect(Collectors.toList());

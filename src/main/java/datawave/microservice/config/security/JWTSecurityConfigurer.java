@@ -80,7 +80,7 @@ public class JWTSecurityConfigurer extends WebSecurityConfigurerAdapter {
         AllowedCallersFilter allowedCallersFilter = getAllowedCallersFilter(securityProperties);
         http.addFilterBefore(allowedCallersFilter, X509AuthenticationFilter.class);
         // Allow JWT authentication
-        http.addFilterAfter(jwtFilter, allowedCallersFilter.getClass());
+        http.addFilterAfter(jwtFilter, X509AuthenticationFilter.class);
     }
     
     protected AllowedCallersFilter getAllowedCallersFilter(DatawaveSecurityProperties securityProperties) {
