@@ -17,6 +17,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import static datawave.microservice.config.web.Constants.REQUEST_LOGIN_TIME_ATTRIBUTE;
+import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
 
 /**
  * A security filter that expects to find an encoded JWT in the "Authorization" header in the request. The token is extracted from the header and passed along
@@ -69,6 +73,8 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
             Authentication auth = authenticationManager.authenticate(jwtToken);
             SecurityContextHolder.getContext().setAuthentication(auth);
             
+            setLoginTimeHeader(request);
+            
             filterChain.doFilter(request, response);
         } catch (AuthenticationException e) {
             SecurityContextHolder.clearContext();
@@ -76,6 +82,13 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
             if (authenticationEntryPoint != null) {
                 authenticationEntryPoint.commence(req, res, e);
             }
+        }
+    }
+    
+    private void setLoginTimeHeader(ServletRequest request) {
+        if (request.getAttribute(REQUEST_START_TIME_NS_ATTRIBUTE) != null) {
+            long loginTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - (long) request.getAttribute(REQUEST_START_TIME_NS_ATTRIBUTE));
+            request.setAttribute(REQUEST_LOGIN_TIME_ATTRIBUTE, String.valueOf(loginTime));
         }
     }
 }

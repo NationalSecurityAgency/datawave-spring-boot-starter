@@ -25,7 +25,11 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static datawave.microservice.config.web.Constants.REQUEST_LOGIN_TIME_ATTRIBUTE;
+import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
 
 /**
  * Allows authorization based on a supplied X.509 client certificate (or information from trusted headers) and proxied entities/issuers named in headers.
@@ -184,5 +188,26 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
         }
         
         return null;
+    }
+    
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult)
+                    throws IOException, ServletException {
+        super.successfulAuthentication(request, response, authResult);
+        setLoginTimeHeader(request);
+    }
+    
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed)
+                    throws IOException, ServletException {
+        super.unsuccessfulAuthentication(request, response, failed);
+        setLoginTimeHeader(request);
+    }
+    
+    private void setLoginTimeHeader(HttpServletRequest request) {
+        if (request.getAttribute(REQUEST_START_TIME_NS_ATTRIBUTE) != null) {
+            long loginTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - (long) request.getAttribute(REQUEST_START_TIME_NS_ATTRIBUTE));
+            request.setAttribute(REQUEST_LOGIN_TIME_ATTRIBUTE, String.valueOf(loginTime));
+        }
     }
 }
