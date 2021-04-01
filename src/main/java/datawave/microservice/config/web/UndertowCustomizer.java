@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.undertow.ConfigurableUndertowWebServerFactory;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.AbstractConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +30,7 @@ import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_A
  */
 @Component
 @ConditionalOnClass({Undertow.class, ConfigurableUndertowWebServerFactory.class})
-public class UndertowCustomizer implements WebServerFactoryCustomizer<ConfigurableUndertowWebServerFactory>, ApplicationContextAware {
+public class UndertowCustomizer implements WebServerFactoryCustomizer<UndertowServletWebServerFactory>, ApplicationContextAware {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
     @Value("${undertow.enable.http2:true}")
@@ -49,7 +50,7 @@ public class UndertowCustomizer implements WebServerFactoryCustomizer<Configurab
     }
     
     @Override
-    public void customize(ConfigurableUndertowWebServerFactory factory) {
+    public void customize(UndertowServletWebServerFactory factory) {
         serverProperties = applicationContext.getBean(ServerProperties.class);
         datawaveServerProperties = applicationContext.getBean(DatawaveServerProperties.class);
         

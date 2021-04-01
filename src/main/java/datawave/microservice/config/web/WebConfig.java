@@ -82,7 +82,7 @@ public class WebConfig {
                 Cors cors = serverProperties.getCors();
                 // @formatter:off
                 cors.getCorsPaths().forEach(p -> registry.addMapping(p)
-                        .allowedOrigins(cors.getAllowedOrigins())
+                        .allowedOriginPatterns(cors.getAllowedOriginPatterns())
                         .allowedMethods(cors.getAllowedMethods())
                         .allowedHeaders(cors.getAllowedHeaders())
                         .allowCredentials(cors.isAllowCredentials())
@@ -108,7 +108,7 @@ public class WebConfig {
                 Cors cors = serverProperties.getCors();
                 // @formatter:off
                 cors.getCorsPaths().forEach(p -> registry.addMapping(p)
-                        .allowedOrigins(cors.getAllowedOrigins())
+                        .allowedOriginPatterns(cors.getAllowedOriginPatterns())
                         .allowedMethods(cors.getAllowedMethods())
                         .allowedHeaders(cors.getAllowedHeaders())
                         .allowCredentials(cors.isAllowCredentials())

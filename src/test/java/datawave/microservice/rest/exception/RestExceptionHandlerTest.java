@@ -3,24 +3,27 @@ package datawave.microservice.rest.exception;
 import datawave.microservice.config.web.Constants;
 import datawave.webservice.query.exception.QueryException;
 import datawave.webservice.result.VoidResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"exceptionMapperTest", "permitAllWebTest"})
 public class RestExceptionHandlerTest {
@@ -42,15 +45,16 @@ public class RestExceptionHandlerTest {
         
         WebClient webClient = webClientBuilder.baseUrl("https://localhost:" + webServicePort + "/starter-test/v1").build();
         
-        ClientResponse clientResponse = webClient.get().uri("/testSingleQueryException").exchange().block();
-        assertNotNull(clientResponse);
-        assertEquals(400, clientResponse.rawStatusCode());
+        ResponseEntity<VoidResponse> responseEntity = webClient.get().uri("/testSingleQueryException").retrieve()
+                        .onStatus(HttpStatus::isError, response -> Mono.empty()).toEntity(VoidResponse.class).block();
+        assertNotNull(responseEntity);
+        assertEquals(400, responseEntity.getStatusCodeValue());
         
-        HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-        assertTrue("ErrorCode header was missing from failed result.", headers.containsKey(Constants.ERROR_CODE_HEADER));
+        HttpHeaders headers = responseEntity.getHeaders();
+        assertTrue(headers.containsKey(Constants.ERROR_CODE_HEADER), "ErrorCode header was missing from failed result.");
         assertEquals(expectedErrorCode, headers.getFirst(Constants.ERROR_CODE_HEADER));
         
-        VoidResponse vr = clientResponse.bodyToMono(VoidResponse.class).block();
+        VoidResponse vr = responseEntity.getBody();
         assertNotNull(vr);
         assertNotNull(vr.getExceptions());
         assertEquals(1, vr.getExceptions().size());
@@ -67,15 +71,16 @@ public class RestExceptionHandlerTest {
         
         WebClient webClient = webClientBuilder.baseUrl("https://localhost:" + webServicePort + "/starter-test/v1").build();
         
-        ClientResponse clientResponse = webClient.get().uri("/testNestedQueryException").exchange().block();
-        assertNotNull(clientResponse);
-        assertEquals(500, clientResponse.rawStatusCode());
+        ResponseEntity<VoidResponse> responseEntity = webClient.get().uri("/testNestedQueryException").retrieve()
+                        .onStatus(HttpStatus::isError, response -> Mono.empty()).toEntity(VoidResponse.class).block();
+        assertNotNull(responseEntity);
+        assertEquals(500, responseEntity.getStatusCodeValue());
         
-        HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-        assertTrue("ErrorCode header was missing from failed result.", headers.containsKey(Constants.ERROR_CODE_HEADER));
+        HttpHeaders headers = responseEntity.getHeaders();
+        assertTrue(headers.containsKey(Constants.ERROR_CODE_HEADER), "ErrorCode header was missing from failed result.");
         assertEquals(expectedErrorCode, headers.getFirst(Constants.ERROR_CODE_HEADER));
         
-        VoidResponse vr = clientResponse.bodyToMono(VoidResponse.class).block();
+        VoidResponse vr = responseEntity.getBody();
         assertNotNull(vr);
         assertNotNull(vr.getExceptions());
         assertEquals(1, vr.getExceptions().size());
@@ -92,14 +97,15 @@ public class RestExceptionHandlerTest {
         
         WebClient webClient = webClientBuilder.baseUrl("https://localhost:" + webServicePort + "/starter-test/v1").build();
         
-        ClientResponse clientResponse = webClient.get().uri("/testNonQueryException").exchange().block();
-        assertNotNull(clientResponse);
-        assertEquals(500, clientResponse.rawStatusCode());
+        ResponseEntity<VoidResponse> responseEntity = webClient.get().uri("/testNonQueryException").retrieve()
+                        .onStatus(HttpStatus::isError, response -> Mono.empty()).toEntity(VoidResponse.class).block();
+        assertNotNull(responseEntity);
+        assertEquals(500, responseEntity.getStatusCodeValue());
         
-        HttpHeaders headers = clientResponse.headers().asHttpHeaders();
-        assertFalse("ErrorCode header was set from non-query failed result.", headers.containsKey(Constants.ERROR_CODE_HEADER));
+        HttpHeaders headers = responseEntity.getHeaders();
+        assertFalse(headers.containsKey(Constants.ERROR_CODE_HEADER), "ErrorCode header was set from non-query failed result.");
         
-        VoidResponse vr = clientResponse.bodyToMono(VoidResponse.class).block();
+        VoidResponse vr = responseEntity.getBody();
         assertNotNull(vr);
         assertNotNull(vr.getExceptions());
         assertEquals(1, vr.getExceptions().size());
