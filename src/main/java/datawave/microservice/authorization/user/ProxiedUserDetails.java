@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.DatawaveUser.UserType;
+import datawave.security.authorization.SubjectIssuerDNPair;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,6 +52,28 @@ public class ProxiedUserDetails implements UserDetails {
     public DatawaveUser getPrimaryUser() {
         DatawaveUser first = proxiedUsers.stream().findFirst().orElse(null);
         return proxiedUsers.stream().filter(u -> u.getUserType() == UserType.USER).findFirst().orElse(first);
+    }
+    
+    @JsonIgnore
+    public Set<String> getProxyServers() {
+        // @formatter:off
+        Set<String> proxyServers = proxiedUsers.stream()
+                .filter(u -> u.getUserType() == UserType.SERVER)
+                .map(DatawaveUser::getDn)
+                .map(SubjectIssuerDNPair::subjectDN)
+                .collect(Collectors.toSet());
+        // @formatter:on
+        return proxyServers.isEmpty() ? null : proxyServers;
+    }
+    
+    @JsonIgnore
+    public List<String> getDNs() {
+        // @formatter:off
+        return proxiedUsers.stream()
+                .map(DatawaveUser::getDn)
+                .map(SubjectIssuerDNPair::subjectDN)
+                .collect(Collectors.toList());
+        // @formatter:on
     }
     
     @Override
