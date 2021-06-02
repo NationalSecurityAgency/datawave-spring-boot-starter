@@ -37,7 +37,7 @@
         <version.microservice.common-utils>1.2-SNAPSHOT</version.microservice.common-utils>
         <version.microservice.metadata-utils>1.8-SNAPSHOT</version.microservice.metadata-utils>
         <version.microservice.metrics.reporter>1.4-SNAPSHOT</version.microservice.metrics.reporter>
-        <version.protostuff>1.5.5</version.protostuff>
+        <version.protostuff>1.6.2</version.protostuff>
         <version.springfox>2.9.2</version.springfox>
         <version.swagger>1.5.21</version.swagger>
     </properties>
