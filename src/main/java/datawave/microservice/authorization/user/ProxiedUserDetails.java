@@ -13,7 +13,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 @XmlRootElement
 public class ProxiedUserDetails implements UserDetails {
     private String username;
-    private List<DatawaveUser> proxiedUsers = new ArrayList<>();
+    private Set<DatawaveUser> proxiedUsers = new LinkedHashSet<>();
     private List<SimpleGrantedAuthority> roles;
     private long creationTime;
     
@@ -36,7 +39,7 @@ public class ProxiedUserDetails implements UserDetails {
     }
     
     public Collection<? extends DatawaveUser> getProxiedUsers() {
-        return Collections.unmodifiableList(proxiedUsers);
+        return Collections.unmodifiableCollection(proxiedUsers);
     }
     
     /**
@@ -52,11 +55,11 @@ public class ProxiedUserDetails implements UserDetails {
         return ProxiedUserDetails.findPrimaryUser(this.proxiedUsers);
     }
     
-    static protected DatawaveUser findPrimaryUser(List<DatawaveUser> datawaveUsers) {
+    static protected DatawaveUser findPrimaryUser(Collection<DatawaveUser> datawaveUsers) {
         if (datawaveUsers.size() <= 1) {
-            return datawaveUsers.get(0);
+            return datawaveUsers.stream().findFirst().orElse(null);
         } else {
-            DatawaveUser secondInOrder = datawaveUsers.get(1);
+            DatawaveUser secondInOrder = datawaveUsers.stream().skip(1).findFirst().orElse(null);
             return datawaveUsers.stream().filter(u -> u.getUserType() == UserType.USER).findFirst().orElse(secondInOrder);
         }
     }
@@ -67,7 +70,7 @@ public class ProxiedUserDetails implements UserDetails {
      * assumptions about the List that is passed to ths method: 1) The first element is the one that made the final call 2) Additional elements (if any) are
      * from X-ProxiedEntitiesChain in chronological order of the calls
      */
-    static protected List<DatawaveUser> orderProxiedUsers(List<DatawaveUser> datawaveUsers) {
+    static protected List<DatawaveUser> orderProxiedUsers(Collection<DatawaveUser> datawaveUsers) {
         DatawaveUser primary = ProxiedUserDetails.findPrimaryUser(datawaveUsers);
         List<DatawaveUser> users = new ArrayList<>();
         users.add(primary);
@@ -75,12 +78,12 @@ public class ProxiedUserDetails implements UserDetails {
             // @formatter:off
             // Skipping first user because if it is UserType.USER, it is the primary
             // and already added.  If it is UserType.Server, then it will be added at the end
-            users.addAll(datawaveUsers.stream()
+            datawaveUsers.stream()
                     .skip(1)
                     .filter(u -> u != primary)
-                    .collect(Collectors.toList()));
+                    .forEach(u -> users.add(u));
             // @formatter:on
-            DatawaveUser first = datawaveUsers.get(0);
+            DatawaveUser first = datawaveUsers.stream().findFirst().orElse(null);
             if (!users.contains(first)) {
                 users.add(first);
             }
