@@ -122,28 +122,11 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
     
     @Override
     protected boolean principalChanged(HttpServletRequest request, Authentication currentAuthentication) {
-        Object principal = getPreAuthenticatedPrincipal(request);
-        
-        if (currentAuthentication.getPrincipal() instanceof ProxiedUserDetails && principal instanceof ProxiedEntityPreauthPrincipal) {
-            ProxiedUserDetails curUsr = (ProxiedUserDetails) currentAuthentication.getPrincipal();
-            ProxiedEntityPreauthPrincipal preAuthPrincipal = (ProxiedEntityPreauthPrincipal) principal;
-            SubjectIssuerDNPair caller = curUsr.getPrimaryUser().getDn();
-            
-            List<String> curNames = curUsr.getProxiedUsers().stream().map(DatawaveUser::getName).collect(Collectors.toList());
-            List<String> preAuthNames = preAuthPrincipal.getProxiedEntities().stream().map(SubjectIssuerDNPair::toString).collect(Collectors.toList());
-            
-            if (caller.equals(preAuthPrincipal.getCallerPrincipal()) && curNames.equals(preAuthNames)) {
-                return false;
-            }
-        } else {
-            // Authentication token isn't the right type, so we shouldn't be trying to authenticate.
-            return false;
-        }
-        
-        if (logger.isDebugEnabled()) {
-            logger.debug("Pre-authenticated principal has changed to " + principal + " and will be re-authenticated");
-        }
-        return true;
+        // this would only get called if checkForPrincipalChanges=true (constructor sets it to false) and there is an
+        // Authentication already in the SecurityContext. If a previous filter such as the
+        // JWTAuthenticationFilter/JWTAuthenticationProvider parsed a JWT into a JWTAuthentication then we should
+        // accept that Authentication and not check for a changed principal
+        return false;
     }
     
     private Set<SubjectIssuerDNPair> getSubjectIssuerDNPairs(String proxiedSubjects, String proxiedIssuers) {
