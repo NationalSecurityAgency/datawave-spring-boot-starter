@@ -74,4 +74,14 @@ public class ProxiedUserDetailsTest {
         proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(server1, server2, server3, user), now);
         Assert.assertEquals(userSubjectDn, proxiedUserDetails.getPrimaryUser().getDn().subjectDN());
     }
+    
+    @Test
+    public void DuplicateUserPreserved() {
+        // check that duplicate users are preserved
+        ProxiedUserDetails dp = new ProxiedUserDetails(Lists.newArrayList(server1, server2, server1), System.currentTimeMillis());
+        Assert.assertEquals(3, dp.getProxiedUsers().size());
+        Assert.assertEquals(server1, dp.getProxiedUsers().stream().findFirst().get());
+        Assert.assertEquals(server2, dp.getProxiedUsers().stream().skip(1).findFirst().get());
+        Assert.assertEquals(server1, dp.getProxiedUsers().stream().skip(2).findFirst().get());
+    }
 }

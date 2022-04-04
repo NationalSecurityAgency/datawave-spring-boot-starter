@@ -13,10 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +23,7 @@ import java.util.stream.Collectors;
 @XmlRootElement
 public class ProxiedUserDetails implements UserDetails {
     private String username;
-    private Set<DatawaveUser> proxiedUsers = new LinkedHashSet<>();
+    private List<DatawaveUser> proxiedUsers = new ArrayList<>();
     private List<SimpleGrantedAuthority> roles;
     private long creationTime;
     
