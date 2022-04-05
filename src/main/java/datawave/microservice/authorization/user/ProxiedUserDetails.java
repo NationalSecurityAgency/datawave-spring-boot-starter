@@ -52,37 +52,47 @@ public class ProxiedUserDetails implements UserDetails {
         return ProxiedUserDetails.findPrimaryUser(this.proxiedUsers);
     }
     
-    static protected DatawaveUser findPrimaryUser(Collection<DatawaveUser> datawaveUsers) {
-        if (datawaveUsers.size() <= 1) {
-            return datawaveUsers.stream().findFirst().orElse(null);
+    static protected DatawaveUser findPrimaryUser(List<DatawaveUser> datawaveUsers) {
+        if (datawaveUsers.isEmpty()) {
+            return null;
         } else {
-            DatawaveUser secondInOrder = datawaveUsers.stream().skip(1).findFirst().orElse(null);
-            return datawaveUsers.stream().filter(u -> u.getUserType() == UserType.USER).findFirst().orElse(secondInOrder);
+            return datawaveUsers.get(findPrimaryUserPosition(datawaveUsers));
+        }
+    }
+    
+    static protected int findPrimaryUserPosition(List<DatawaveUser> datawaveUsers) {
+        if (datawaveUsers.isEmpty()) {
+            return -1;
+        } else {
+            for (int x = 0; x < datawaveUsers.size(); x++) {
+                if (datawaveUsers.get(x).getUserType().equals(UserType.USER)) {
+                    return x;
+                }
+            }
+            return 0;
         }
     }
     
     /*
      * The purpose here is to return a List of DatawaveUsers where the original caller is first followed by any entities in X-ProxiedEntitiesChain in the order
      * that they were traversed and ending with the entity that made the final call. The List that is passed is not modified. This method makes the following
-     * assumptions about the List that is passed to ths method: 1) The first element is the one that made the final call 2) Additional elements (if any) are
-     * from X-ProxiedEntitiesChain in chronological order of the calls
+     * assumptions about the List that is passed to ths method: 1) The last element is the one that made the final call 2) Additional elements (if any) are from
+     * X-ProxiedEntitiesChain in chronological order of the calls
      */
-    static protected List<DatawaveUser> orderProxiedUsers(Collection<DatawaveUser> datawaveUsers) {
-        DatawaveUser primary = ProxiedUserDetails.findPrimaryUser(datawaveUsers);
+    static protected List<DatawaveUser> orderProxiedUsers(List<DatawaveUser> datawaveUsers) {
         List<DatawaveUser> users = new ArrayList<>();
-        users.add(primary);
-        if (datawaveUsers.size() > 1) {
-            // @formatter:off
-            // Skipping first user because if it is UserType.USER, it is the primary
-            // and already added.  If it is UserType.Server, then it will be added at the end
-            datawaveUsers.stream()
-                    .skip(1)
-                    .filter(u -> u != primary)
-                    .forEach(u -> users.add(u));
-            // @formatter:on
-            DatawaveUser first = datawaveUsers.stream().findFirst().orElse(null);
-            if (!users.contains(first)) {
-                users.add(first);
+        int position = ProxiedUserDetails.findPrimaryUserPosition(datawaveUsers);
+        if (position >= 0) {
+            users.add(datawaveUsers.get(position));
+            if (datawaveUsers.size() > 1) {
+                // @formatter:off
+                if (position > 0) {
+                    datawaveUsers.stream().limit(position)
+                            .forEach(u -> users.add(u));
+                }
+                datawaveUsers.stream().skip(position + 1)
+                        .forEach(u -> users.add(u));
+                // @formatter:on
             }
         }
         return users;

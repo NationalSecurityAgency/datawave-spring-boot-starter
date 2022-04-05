@@ -86,7 +86,7 @@ public class RemoteAuthorizationServiceUserDetailsService implements Authenticat
     private String buildDNChain(ProxiedEntityPreauthPrincipal principal, Function<SubjectIssuerDNPair,String> dnFunc) {
         // @formatter:off
         return "<" +
-            Stream.concat(Stream.of(principal.getCallerPrincipal()), principal.getProxiedEntities().stream())
+            Stream.concat(principal.getProxiedEntities().stream(), Stream.of(principal.getCallerPrincipal()))
                 .map(dnFunc)
                 .map(ProxiedEntityUtils::buildProxiedDN)
                 .collect(Collectors.joining("><"))

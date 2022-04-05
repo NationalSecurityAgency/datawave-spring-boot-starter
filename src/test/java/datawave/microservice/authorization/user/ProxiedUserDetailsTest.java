@@ -50,15 +50,15 @@ public class ProxiedUserDetailsTest {
         Assert.assertEquals(userSubjectDn, proxiedUserDetails.getPrimaryUser().getDn().subjectDN());
         
         // call from finalConnectionServer proxying initial caller server1
-        proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(finalConnectionServer, server1), now);
+        proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(server1, finalConnectionServer), now);
         Assert.assertEquals(server1SubjectDn, proxiedUserDetails.getPrimaryUser().getDn().subjectDN());
         
         // call from finalConnectionServer proxying initial caller server1 through server2
-        proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(finalConnectionServer, server1, server2), now);
+        proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(server1, server2, finalConnectionServer), now);
         Assert.assertEquals(server1SubjectDn, proxiedUserDetails.getPrimaryUser().getDn().subjectDN());
         
         // call from finalConnectionServer proxying initial caller server1 through server2 and server3
-        proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(finalConnectionServer, server1, server2, server3), now);
+        proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(server1, server2, server3, finalConnectionServer), now);
         Assert.assertEquals(server1SubjectDn, proxiedUserDetails.getPrimaryUser().getDn().subjectDN());
         
         // these tests are for case where a UserType.USER appears anywhere in the proxiedUsers collection
@@ -73,6 +73,42 @@ public class ProxiedUserDetailsTest {
         
         proxiedUserDetails = new ProxiedUserDetails(Lists.newArrayList(server1, server2, server3, user), now);
         Assert.assertEquals(userSubjectDn, proxiedUserDetails.getPrimaryUser().getDn().subjectDN());
+    }
+    
+    @Test
+    public void OrderProxiedUsers() {
+        
+        long now = System.currentTimeMillis();
+        
+        // call from finalServer
+        Assert.assertEquals(Lists.newArrayList(finalConnectionServer), ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(finalConnectionServer)));
+        
+        // call from finalServer proxying initial caller server1
+        Assert.assertEquals(Lists.newArrayList(server1, finalConnectionServer),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(server1, finalConnectionServer)));
+        
+        // call from finalServer proxying initial caller server1 through server2
+        Assert.assertEquals(Lists.newArrayList(server1, server2, finalConnectionServer),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(server1, server2, finalConnectionServer)));
+        
+        // call from finalServer proxying initial caller server1 through server2 and server3
+        Assert.assertEquals(Lists.newArrayList(server1, server2, server3, finalConnectionServer),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(server1, server2, server3, finalConnectionServer)));
+        
+        // these tests are for cases where a UserType.USER appears anywhere in the proxiedUsers collection
+        
+        Assert.assertEquals(Lists.newArrayList(user, server1, server2, server3),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(user, server1, server2, server3)));
+        
+        Assert.assertEquals(Lists.newArrayList(user, server1, server2, server3),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(server1, user, server2, server3)));
+        
+        Assert.assertEquals(Lists.newArrayList(user, server1, server2, server3),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(server1, server2, user, server3)));
+        
+        // this case would be very odd -- call from user proxying initial caller server1 through server2 through server3
+        Assert.assertEquals(Lists.newArrayList(user, server1, server2, server3),
+                        ProxiedUserDetails.orderProxiedUsers(Lists.newArrayList(server1, server2, server3, user)));
     }
     
     @Test
