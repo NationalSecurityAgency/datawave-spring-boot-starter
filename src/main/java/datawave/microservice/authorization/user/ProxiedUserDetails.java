@@ -42,7 +42,7 @@ public class ProxiedUserDetails implements UserDetails {
     /**
      * Gets the {@link DatawaveUser} that represents the primary user in this ProxiedUserDetails. If there is only one DatawaveUser, then it is the primaryUser.
      * If there is more than one DatawaveUser, then the first (and presumably only) DatawaveUser whose {@link DatawaveUser#getUserType()} is
-     * {@link UserType#USER} is the primary user. If no such DatawaveUser is present, then the second principal in the list is returned as the primary user.
+     * {@link UserType#USER} is the primary user. If no such DatawaveUser is present, then the first principal in the list is returned as the primary user.
      * This will be the first entity in the X-ProxiedEntitiesChain which should be the server that originated the request.
      *
      * @return The {@link DatawaveUser} that represents the primary user in the list of proxied users
@@ -85,14 +85,8 @@ public class ProxiedUserDetails implements UserDetails {
         if (position >= 0) {
             users.add(datawaveUsers.get(position));
             if (datawaveUsers.size() > 1) {
-                // @formatter:off
-                if (position > 0) {
-                    datawaveUsers.stream().limit(position)
-                            .forEach(u -> users.add(u));
-                }
-                datawaveUsers.stream().skip(position + 1)
-                        .forEach(u -> users.add(u));
-                // @formatter:on
+                datawaveUsers.stream().limit(position).forEach(u -> users.add(u));
+                datawaveUsers.stream().skip(position + 1).forEach(u -> users.add(u));
             }
         }
         return users;
