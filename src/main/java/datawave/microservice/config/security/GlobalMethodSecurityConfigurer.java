@@ -12,5 +12,5 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @Configuration
 @EnableWebSecurity
 @ConditionalOnWebApplication
-@EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class GlobalMethodSecurityConfigurer {}
