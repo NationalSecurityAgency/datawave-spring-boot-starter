@@ -1,7 +1,5 @@
 package datawave.microservice.authorization.preauth;
 
-import datawave.microservice.authorization.user.ProxiedUserDetails;
-import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.security.util.ProxiedEntityUtils;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,10 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -92,16 +90,10 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
                 throw new BadCredentialsException(ENTITIES_HEADER + " header was supplied, but " + ISSUERS_HEADER + " header is missing.");
             }
         }
-        // If we're not requiring proxied entities, then copy the caller's DN information into the proxied entities slot.
-        // Normally, we operate in a mode where an authorized certificate holder calls us on behalf of other entities. However,
-        // if we don't require that, then we want to create the principal as though the caller proxied for itself.
-        else if (proxiedSubjects == null) {
-            proxiedSubjects = "<" + caller.subjectDN() + ">";
-            proxiedIssuers = "<" + caller.issuerDN() + ">";
+        List<SubjectIssuerDNPair> proxiedEntities = new ArrayList<>();
+        if (proxiedSubjects != null) {
+            proxiedEntities.addAll(getSubjectIssuerDNPairs(proxiedSubjects, proxiedIssuers));
         }
-        
-        Set<SubjectIssuerDNPair> proxiedEntities = getSubjectIssuerDNPairs(proxiedSubjects, proxiedIssuers);
-        
         return new ProxiedEntityPreauthPrincipal(caller, proxiedEntities);
     }
     
@@ -126,38 +118,21 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
     
     @Override
     protected boolean principalChanged(HttpServletRequest request, Authentication currentAuthentication) {
-        Object principal = getPreAuthenticatedPrincipal(request);
-        
-        if (currentAuthentication.getPrincipal() instanceof ProxiedUserDetails && principal instanceof ProxiedEntityPreauthPrincipal) {
-            ProxiedUserDetails curUsr = (ProxiedUserDetails) currentAuthentication.getPrincipal();
-            ProxiedEntityPreauthPrincipal preAuthPrincipal = (ProxiedEntityPreauthPrincipal) principal;
-            SubjectIssuerDNPair caller = curUsr.getPrimaryUser().getDn();
-            
-            List<String> curNames = curUsr.getProxiedUsers().stream().map(DatawaveUser::getName).collect(Collectors.toList());
-            List<String> preAuthNames = preAuthPrincipal.getProxiedEntities().stream().map(SubjectIssuerDNPair::toString).collect(Collectors.toList());
-            
-            if (caller.equals(preAuthPrincipal.getCallerPrincipal()) && curNames.equals(preAuthNames)) {
-                return false;
-            }
-        } else {
-            // Authentication token isn't the right type, so we shouldn't be trying to authenticate.
-            return false;
-        }
-        
-        if (logger.isDebugEnabled()) {
-            logger.debug("Pre-authenticated principal has changed to " + principal + " and will be re-authenticated");
-        }
-        return true;
+        // this would only get called if checkForPrincipalChanges=true (constructor sets it to false) and there is an
+        // Authentication already in the SecurityContext. If a previous filter such as the
+        // JWTAuthenticationFilter/JWTAuthenticationProvider parsed a JWT into a JWTAuthentication then we should
+        // accept that Authentication and not check for a changed principal
+        return false;
     }
     
-    private Set<SubjectIssuerDNPair> getSubjectIssuerDNPairs(String proxiedSubjects, String proxiedIssuers) {
+    protected List<SubjectIssuerDNPair> getSubjectIssuerDNPairs(String proxiedSubjects, String proxiedIssuers) {
         if (StringUtils.isEmpty(proxiedSubjects)) {
             return null;
         } else {
-            Set<SubjectIssuerDNPair> proxiedEntities;
+            List<SubjectIssuerDNPair> proxiedEntities;
             Collection<String> entities = Arrays.asList(ProxiedEntityUtils.splitProxiedDNs(proxiedSubjects, true));
             if (!requireIssuers) {
-                proxiedEntities = entities.stream().map(SubjectIssuerDNPair::of).collect(Collectors.toCollection(LinkedHashSet::new));
+                proxiedEntities = entities.stream().map(SubjectIssuerDNPair::of).collect(Collectors.toCollection(ArrayList::new));
             } else {
                 Collection<String> issuers = Arrays.asList(ProxiedEntityUtils.splitProxiedDNs(proxiedIssuers, true));
                 if (issuers.size() != entities.size()) {
@@ -166,7 +141,7 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
                     throw new BadCredentialsException("Invalid proxied entities chain.");
                 }
                 Iterator<String> issIt = issuers.iterator();
-                proxiedEntities = entities.stream().map(dn -> SubjectIssuerDNPair.of(dn, issIt.next())).collect(Collectors.toCollection(LinkedHashSet::new));
+                proxiedEntities = entities.stream().map(dn -> SubjectIssuerDNPair.of(dn, issIt.next())).collect(Collectors.toCollection(ArrayList::new));
             }
             return proxiedEntities;
         }
