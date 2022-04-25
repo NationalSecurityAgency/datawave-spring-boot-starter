@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import javax.annotation.security.PermitAll;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,7 +59,6 @@ public class ProtostuffHttpMessageConverterTest {
     @RestController
     @RequestMapping(path = "/", produces = {"application/x-protostuff", "application/json"})
     public static class TestController {
-        @PermitAll
         @RequestMapping(path = "/vr")
         public VoidResponse voidResponse() {
             VoidResponse voidResponse = new VoidResponse();

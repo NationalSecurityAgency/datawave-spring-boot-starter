@@ -48,6 +48,12 @@
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${version.jackson}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                        <groupId>jakarta.xml.bind</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.jcraft</groupId>
