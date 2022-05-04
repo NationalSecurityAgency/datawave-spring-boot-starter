@@ -26,11 +26,6 @@ import java.util.concurrent.TimeUnit;
 public class JWTConfiguration {
     
     @Bean
-    public GuavaModule guavaModule() {
-        return new GuavaModule();
-    }
-    
-    @Bean
     @RefreshScope
     public JWTTokenHandler jwtTokenHandler(ServerProperties serverProperties, DatawaveSecurityProperties securityProperties, ObjectMapper objectMapper) {
         try {

@@ -42,8 +42,12 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
                 long minCreateTime = users.stream().map(DatawaveUser::getCreationTime).min(Long::compareTo).orElse(System.currentTimeMillis());
                 ProxiedUserDetails proxiedUserDetails = new ProxiedUserDetails(users, minCreateTime);
                 return new JWTAuthentication(proxiedUserDetails);
-            } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
-                throw new InvalidTokenException("JWT is not valid.", e);
+            } catch (UnsupportedJwtException uje) {
+                throw new InvalidTokenException("JWT type is not supported - " + uje.getMessage(), uje);
+            } catch (MalformedJwtException mje) {
+                throw new InvalidTokenException("JWT is malformed - " + mje.getMessage(), mje);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidTokenException("JWT is not valid - " + e.getMessage(), e);
             } catch (SignatureException e) {
                 throw new InvalidSignatureException("JWT signature validation failed", e);
             } catch (ExpiredJwtException e) {

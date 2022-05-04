@@ -23,13 +23,8 @@
         <url>https://github.com/NationalSecurityAgency/datawave-spring-boot-starter</url>
     </scm>
     <properties>
-        <version.accumulo>1.9.3</version.accumulo>
-        <version.dropwizard-metrics>3.1.5</version.dropwizard-metrics>
         <version.in-memory-accumulo>1.9.3-SNAPSHOT</version.in-memory-accumulo>
-        <version.jackson>2.10.0.pr1</version.jackson>
         <version.jzlib>1.1.3</version.jzlib>
-        <version.log4j-1.2-api>2.17.1</version.log4j-1.2-api>
-        <version.log4j-bom>2.17.1</version.log4j-bom>
         <version.metrics-spring>3.1.3</version.metrics-spring>
         <version.microservice.accumulo-utils>1.5-SNAPSHOT</version.microservice.accumulo-utils>
         <version.microservice.authorization.api>1.14-SNAPSHOT</version.microservice.authorization.api>
@@ -38,23 +33,11 @@
         <version.microservice.common-utils>1.2-SNAPSHOT</version.microservice.common-utils>
         <version.microservice.metadata-utils>1.10-SNAPSHOT</version.microservice.metadata-utils>
         <version.microservice.metrics.reporter>1.4-SNAPSHOT</version.microservice.metrics.reporter>
-        <version.protostuff>1.6.2</version.protostuff>
         <version.springfox>2.9.2</version.springfox>
         <version.swagger>1.5.21</version.swagger>
     </properties>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>${version.jackson}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>jakarta.xml.bind-api</artifactId>
-                        <groupId>jakarta.xml.bind</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
             <dependency>
                 <groupId>com.jcraft</groupId>
                 <artifactId>jzlib</artifactId>
@@ -165,18 +148,23 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!--
+                TEMPORARILY REMOVED DUE TO UPGRADE ISSUES
             <dependency>
-                <!-- This bridge allows log4j2 to work with code that is still using the log4j 1.2 classes/api -->
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-1.2-api</artifactId>
-                <version>${version.log4j-1.2-api}</version>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${version.springfox}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
-                <version>${version.log4j-bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${version.springfox}</version>
+            </dependency>
+            -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>5.4.5</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.contrib</groupId>
@@ -204,19 +192,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!--
-                TEMPORARILY REMOVED DUE TO UPGRADE ISSUES
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${version.springfox}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${version.springfox}</version>
-            </dependency>
-            -->
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -407,6 +382,10 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
         </dependency>
     </dependencies>
     <repositories>

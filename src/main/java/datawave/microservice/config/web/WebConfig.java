@@ -2,6 +2,7 @@ package datawave.microservice.config.web;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import datawave.microservice.config.web.DatawaveServerProperties.Cors;
 import datawave.microservice.config.web.filter.ResponseHeaderServletFilter;
@@ -52,6 +53,11 @@ public class WebConfig {
         return new JaxbAnnotationModule();
     }
     
+    @Bean
+    public GuavaModule guavaModule() {
+        return new GuavaModule();
+    }
+    
     /**
      * Enables by default the Jackson object mapper feature {@link MapperFeature#USE_WRAPPER_NAME_AS_PROPERTY_NAME}. For annotated objects that use
      * {@link javax.xml.bind.annotation.XmlElementWrapper}, this will use the specified name as the JSON property name rather than the value of
@@ -64,7 +70,7 @@ public class WebConfig {
     @Bean
     @ConditionalOnProperty(name = "spring.jackson.mapper.use-wrapper-name-as-property-name", havingValue = "true", matchIfMissing = true)
     public Jackson2ObjectMapperBuilderCustomizer datawaveJacksonCustomizer() {
-        return c -> c.featuresToEnable(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME);
+        return c -> c.featuresToEnable(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME).modules(jaxbAnnotationModule(), guavaModule());
     }
     
     /**
