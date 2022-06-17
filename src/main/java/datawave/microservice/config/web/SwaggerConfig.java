@@ -20,14 +20,14 @@ public class SwaggerConfig {
     @Autowired
     private SwaggerProperties swaggerProperties;
     
-    @Autowired
+    @Autowired(required = false)
     private BuildProperties buildProperties;
     
     @Bean
     public OpenAPI springDocsOpenAPI() {
+        String version = (buildProperties != null) ? buildProperties.getVersion() : "";
         return new OpenAPI()
-                        .info(new Info().title(swaggerProperties.getTitle()).description(swaggerProperties.getDescription())
-                                        .version(buildProperties.getVersion())
+                        .info(new Info().title(swaggerProperties.getTitle()).description(swaggerProperties.getDescription()).version(version)
                                         .license(new License().name(swaggerProperties.getLicenseName()).url(swaggerProperties.getLicenseUrl())))
                         .externalDocs(new ExternalDocumentation().description(swaggerProperties.getExternalDocsDesc())
                                         .url(swaggerProperties.getExternalDocsUrl()));
