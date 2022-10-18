@@ -360,4 +360,67 @@
             <url>https://raw.githubusercontent.com/NationalSecurityAgency/datawave/mvn-repo</url>
         </repository>
     </repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <!-- build javadoc jars per module for publishing to the repo -->
+                    <execution>
+                        <id>module-apidocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration combine.self="override">
+                            <encoding>UTF-8</encoding>
+                            <destDir>${project.build.directory}/javadoc</destDir>
+                            <javadocVersion>1.8.0</javadocVersion>
+                            <additionalJOption>-J-Xmx768m</additionalJOption>
+                            <tags>
+                                <tag>
+                                    <name>HTTP</name>
+                                    <placement>m</placement>
+                                    <head>HTTP Return Codes</head>
+                                </tag>
+                                <tag>
+                                    <name>RequestHeader</name>
+                                    <placement>m</placement>
+                                    <head>HTTP Request Headers</head>
+                                </tag>
+                                <tag>
+                                    <name>ResponseHeader</name>
+                                    <placement>m</placement>
+                                    <head>HTTP Response Headers</head>
+                                </tag>
+                                <tag>
+                                    <name>returnWrapped</name>
+                                    <placement>m</placement>
+                                    <head>Output</head>
+                                </tag>
+                                <tag>
+                                    <name>NonNullApi</name>
+                                    <placement>X</placement>
+                                </tag>
+                                <tag>
+                                    <name>NonNullFields</name>
+                                    <placement>X</placement>
+                                </tag>
+                            </tags>
+                            <show>private</show>
+                            <quiet>true</quiet>
+                            <javaApiLinks>
+                                <property>
+                                    <name>api_1.8</name>
+                                    <value>http://docs.oracle.com/javase/8/docs/api</value>
+                                </property>
+                            </javaApiLinks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
