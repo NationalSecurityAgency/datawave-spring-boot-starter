@@ -72,7 +72,7 @@ public class DatawaveServerProperties {
         @NotEmpty
         private List<String> corsPaths = Lists.newArrayList("/**");
         @NotEmpty
-        private String[] allowedOrigins = new String[] {"*"};
+        private String[] allowedOriginPatterns = new String[] {"*"};
         @NotEmpty
         private String[] allowedMethods = new String[] {"HEAD", "DELETE", "GET", "POST", "PUT", "OPTIONS"};
         private boolean allowCredentials = true;
@@ -90,12 +90,12 @@ public class DatawaveServerProperties {
             this.corsPaths = corsPaths;
         }
         
-        public String[] getAllowedOrigins() {
-            return allowedOrigins;
+        public String[] getAllowedOriginPatterns() {
+            return allowedOriginPatterns;
         }
         
-        public void setAllowedOrigins(String[] allowedOrigins) {
-            this.allowedOrigins = allowedOrigins;
+        public void setAllowedOriginPatterns(String[] allowedOriginPatterns) {
+            this.allowedOriginPatterns = allowedOriginPatterns;
         }
         
         public String[] getAllowedMethods() {
