@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.undertow.ConfigurableUndertowWebServerFactory;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.boot.web.server.AbstractConfigurableWebServerFactory;
 import org.springframework.boot.web.server.Http2;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -27,7 +28,7 @@ import org.xnio.Options;
  */
 @Component
 @ConditionalOnClass({Undertow.class, ConfigurableUndertowWebServerFactory.class})
-public class UndertowCustomizer implements WebServerFactoryCustomizer<ConfigurableUndertowWebServerFactory>, ApplicationContextAware {
+public class UndertowCustomizer implements WebServerFactoryCustomizer<UndertowServletWebServerFactory>, ApplicationContextAware {
     @Value("${undertow.enable.http2:true}")
     private boolean enableHttp2;
     
@@ -45,7 +46,7 @@ public class UndertowCustomizer implements WebServerFactoryCustomizer<Configurab
     }
     
     @Override
-    public void customize(ConfigurableUndertowWebServerFactory factory) {
+    public void customize(UndertowServletWebServerFactory factory) {
         serverProperties = applicationContext.getBean(ServerProperties.class);
         datawaveServerProperties = applicationContext.getBean(DatawaveServerProperties.class);
         

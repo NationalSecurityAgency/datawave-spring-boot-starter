@@ -24,7 +24,7 @@ server:
 ---
 
 spring:
-  profiles: 'converterTest'
+  config.activate.on-profile: 'converterTest'
   security:
     datawave:
       jwt:
@@ -33,7 +33,7 @@ spring:
 ---
 
 spring:
-  profiles: 'exceptionMapperTest'
+  config.activate.on-profile: 'exceptionMapperTest'
   security:
     datawave:
       enforce-allowed-callers: false

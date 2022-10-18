@@ -4,6 +4,7 @@ import datawave.microservice.config.metrics.MetricsConfigurationProperties;
 import datawave.microservice.config.web.RestClientProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
+import org.springframework.cloud.bus.PathServiceMatcher;
 import org.springframework.cloud.bus.ServiceMatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,6 @@ public class DatawaveMicroserviceConfig {
         // This matcher is used to deal with spring bus events. If we're running with the "nomessaging" profile, that means
         // we're not using a message bus and therefore no ServiceMatcher will be created. However, we still reference one
         // for internal use, so we make a dummy for that case.
-        return new ServiceMatcher(new AntPathMatcher(), "invalid");
+        return new PathServiceMatcher(new AntPathMatcher(), "invalid");
     }
 }
