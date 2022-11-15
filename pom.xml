@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>2.0</version>
+        <version>2.1-SNAPSHOT</version>
         <relativePath />
     </parent>
     <artifactId>spring-boot-starter-datawave</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <url>https://code.nsa.gov/datawave-spring-boot-starter</url>
     <licenses>
         <license>
@@ -23,19 +23,19 @@
         <url>https://github.com/NationalSecurityAgency/datawave-spring-boot-starter</url>
     </scm>
     <properties>
-        <version.accumulo>2.0.0</version.accumulo>
+        <version.accumulo>2.1.0</version.accumulo>
         <version.beanutils>1.9.4</version.beanutils>
-        <version.in-memory-accumulo>2.0.1</version.in-memory-accumulo>
+        <version.in-memory-accumulo>2.1.0</version.in-memory-accumulo>
         <version.jackson>2.10.1</version.jackson>
         <version.jzlib>1.1.3</version.jzlib>
         <version.log4j-1.2-api>2.17.1</version.log4j-1.2-api>
         <version.log4j-bom>2.17.1</version.log4j-bom>
         <version.metrics-spring>3.1.3</version.metrics-spring>
-        <version.microservice.accumulo-utils>2.0.0</version.microservice.accumulo-utils>
-        <version.microservice.authorization.api>2.0.0</version.microservice.authorization.api>
-        <version.microservice.base-rest-responses>2.0.0</version.microservice.base-rest-responses>
-        <version.microservice.cache-starter>2.0.0</version.microservice.cache-starter>
-        <version.microservice.metadata-utils>2.0.0</version.microservice.metadata-utils>
+        <version.microservice.accumulo-utils>2.1.0</version.microservice.accumulo-utils>
+        <version.microservice.authorization.api>2.1.0-SNAPSHOT</version.microservice.authorization.api>
+        <version.microservice.base-rest-responses>2.1.0-SNAPSHOT</version.microservice.base-rest-responses>
+        <version.microservice.cache-starter>2.1.0-SNAPSHOT</version.microservice.cache-starter>
+        <version.microservice.metadata-utils>2.1.0</version.microservice.metadata-utils>
         <version.microservice.metrics.reporter>1.3</version.microservice.metrics.reporter>
         <version.protostuff>1.6.2</version.protostuff>
         <version.springfox>2.9.2</version.springfox>
@@ -76,8 +76,28 @@
                 <exclusions>
                     <!-- Exclude log4j since with spring boot we're using log4j2 -->
                     <exclusion>
-                        <artifactId>log4j</artifactId>
-                        <groupId>log4j</groupId>
+                        <artifactId>*</artifactId>
+                        <groupId>org.apache.logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>junit</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>io.opentelemetry</groupId>
+                    </exclusion>
+                    <!--
+                    NOTE: We have a severe allergy to netty-tcnative and its transitives.
+                    Causes surefire JVMs to core dump in dramatic fashion
+                    -->
+                    <exclusion>
+                        <artifactId>netty-tcnative</artifactId>
+                        <groupId>io.netty</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -96,14 +116,17 @@
                 <artifactId>metadata-utils</artifactId>
                 <version>${version.microservice.metadata-utils}</version>
                 <exclusions>
-                    <!-- Exclude log4j since with spring boot we're using log4j2 -->
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>log4j</artifactId>
-                        <groupId>log4j</groupId>
+                        <artifactId>*</artifactId>
+                        <groupId>org.apache.logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
                     </exclusion>
                     <exclusion>
                         <artifactId>slf4j-log4j12</artifactId>
@@ -149,8 +172,12 @@
                         <groupId>junit</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>log4j</artifactId>
-                        <groupId>log4j</groupId>
+                        <artifactId>*</artifactId>
+                        <groupId>org.apache.logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
