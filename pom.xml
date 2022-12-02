@@ -57,6 +57,27 @@
                 <version>${version.metrics-spring}</version>
             </dependency>
             <dependency>
+                <groupId>gov.nsa.datawave</groupId>
+                <artifactId>datawave-in-memory-accumulo</artifactId>
+                <version>${version.in-memory-accumulo}</version>
+                <exclusions>
+                    <!-- Exclude log4j since with spring boot we're using log4j2 -->
+                    <exclusion>
+                        <artifactId>log4j</artifactId>
+                        <groupId>log4j</groupId>
+                    </exclusion>
+                    <!-- Exclude java servlet and JSP api jars since the hadoop versions are old and spring includes newer version -->
+                    <exclusion>
+                        <artifactId>servlet-api</artifactId>
+                        <groupId>javax.servlet</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>jsp-api</artifactId>
+                        <groupId>javax.servlet.jsp</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>accumulo-utils</artifactId>
                 <version>${version.microservice.accumulo-utils}</version>
@@ -160,35 +181,14 @@
                 <artifactId>springdoc-openapi-ui</artifactId>
                 <version>${version.springdoc}</version>
             </dependency>
-            <dependency>
-                <groupId>gov.nsa.datawave</groupId>
-                <artifactId>datawave-in-memory-accumulo</artifactId>
-                <version>${version.in-memory-accumulo}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <!-- Exclude log4j since with spring boot we're using log4j2 -->
-                    <exclusion>
-                        <artifactId>log4j</artifactId>
-                        <groupId>log4j</groupId>
-                    </exclusion>
-                    <!-- Exclude java servlet and JSP api jars since the hadoop versions are old and spring includes newer version -->
-                    <exclusion>
-                        <artifactId>servlet-api</artifactId>
-                        <groupId>javax.servlet</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>jsp-api</artifactId>
-                        <groupId>javax.servlet.jsp</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-        </dependency>
+        <!-- TODO: JWO: this breaks serialization of wrapped elements in MapReduceJobDescription.java and QueryLogicDescription.java -->
+        <!--        <dependency>-->
+        <!--            <groupId>com.fasterxml.jackson.dataformat</groupId>-->
+        <!--            <artifactId>jackson-dataformat-xml</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
