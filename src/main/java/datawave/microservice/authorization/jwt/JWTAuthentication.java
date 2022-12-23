@@ -1,6 +1,6 @@
 package datawave.microservice.authorization.jwt;
 
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 public class JWTAuthentication implements Authentication {
     private static final long serialVersionUID = 1L;
     
-    private final ProxiedUserDetails userDetails;
+    private final DatawaveUserDetails userDetails;
     private final List<GrantedAuthority> authorities;
     private boolean authenticated;
     
-    public JWTAuthentication(ProxiedUserDetails userDetails) {
+    public JWTAuthentication(DatawaveUserDetails userDetails) {
         this.userDetails = userDetails;
         authorities = userDetails.getPrimaryUser().getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         authenticated = true;

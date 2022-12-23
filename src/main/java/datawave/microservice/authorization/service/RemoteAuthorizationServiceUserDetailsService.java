@@ -3,7 +3,7 @@ package datawave.microservice.authorization.service;
 import com.codahale.metrics.annotation.Timed;
 import datawave.microservice.authorization.preauth.ProxiedEntityPreauthPrincipal;
 import datawave.microservice.authorization.preauth.ProxiedEntityX509Filter;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.JWTTokenHandler;
 import datawave.security.authorization.SubjectIssuerDNPair;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 /**
  * An {@link AuthenticationUserDetailsService} that retrieves user information from a remote authorization service for a set of proxied entity names, and
- * combines the results into a {@link ProxiedUserDetails}.
+ * combines the results into a {@link DatawaveUserDetails}.
  * <p>
  * This service assumes that the caller principal and proxied entities all need to be combined into a proxy chain that is authenticated. The purpose of this
  * service is for a microservice that has not received a JWT header to call out to a remote authorization service to retrieve authentication information. In
@@ -73,7 +73,7 @@ public class RemoteAuthorizationServiceUserDetailsService implements Authenticat
             if (jwt != null) {
                 Collection<DatawaveUser> principals = jwtTokenHandler.createUsersFromToken(jwt);
                 long createTime = principals.stream().map(DatawaveUser::getCreationTime).min(Long::compareTo).orElse(System.currentTimeMillis());
-                return new ProxiedUserDetails(principals, createTime);
+                return new DatawaveUserDetails(principals, createTime);
             } else {
                 throw new UsernameNotFoundException("No entities found for " + principal.getUsername());
             }

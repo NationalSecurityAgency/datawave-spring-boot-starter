@@ -1,6 +1,6 @@
 package datawave.microservice.authorization.jwt;
 
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.JWTTokenHandler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,11 +21,11 @@ public class JWTRestTemplate extends RestTemplate {
         this.jwtTokenHandler = jwtTokenHandler;
     }
     
-    public <T> RequestEntity<T> createRequestEntity(ProxiedUserDetails currentUser, HttpMethod method, UriComponents uri) {
+    public <T> RequestEntity<T> createRequestEntity(DatawaveUserDetails currentUser, HttpMethod method, UriComponents uri) {
         return createRequestEntity(currentUser, null, null, method, uri);
     }
     
-    public <T> RequestEntity<T> createRequestEntity(ProxiedUserDetails currentUser, T body, MultiValueMap<String,String> additionalHeaders, HttpMethod method,
+    public <T> RequestEntity<T> createRequestEntity(DatawaveUserDetails currentUser, T body, MultiValueMap<String,String> additionalHeaders, HttpMethod method,
                     UriComponents uri) {
         String token = jwtTokenHandler.createTokenFromUsers(currentUser.getUsername(), currentUser.getProxiedUsers());
         HttpHeaders headers = new HttpHeaders();
@@ -36,7 +36,7 @@ public class JWTRestTemplate extends RestTemplate {
         return new RequestEntity<>(body, headers, method, uri.toUri());
     }
     
-    public <T> ResponseEntity<T> exchange(ProxiedUserDetails currentUser, HttpMethod method, UriComponents uri, Class<T> responseType)
+    public <T> ResponseEntity<T> exchange(DatawaveUserDetails currentUser, HttpMethod method, UriComponents uri, Class<T> responseType)
                     throws RestClientException {
         RequestEntity<T> requestEntity = createRequestEntity(currentUser, method, uri);
         return exchange(requestEntity, responseType);
