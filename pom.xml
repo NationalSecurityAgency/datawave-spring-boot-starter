@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>3.0</version>
         <relativePath>../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>spring-boot-starter-datawave</artifactId>
@@ -32,7 +32,7 @@
         <version.microservice.accumulo-utils>1.6-SNAPSHOT</version.microservice.accumulo-utils>
         <version.microservice.authorization.api>1.15-SNAPSHOT</version.microservice.authorization.api>
         <version.microservice.base-rest-responses>1.3-SNAPSHOT</version.microservice.base-rest-responses>
-        <version.microservice.cache-starter>1.1-SNAPSHOT</version.microservice.cache-starter>
+        <version.microservice.cache-starter>2.0-SNAPSHOT</version.microservice.cache-starter>
         <version.microservice.common-utils>1.2-SNAPSHOT</version.microservice.common-utils>
         <version.microservice.metadata-utils>1.14-SNAPSHOT</version.microservice.metadata-utils>
         <version.microservice.metrics.reporter>1.4-SNAPSHOT</version.microservice.metrics.reporter>
