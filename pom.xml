@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>3.0</version>
+        <version>3.1-SNAPSHOT</version>
         <relativePath>../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>spring-boot-starter-datawave</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <url>https://code.nsa.gov/datawave-spring-boot-starter</url>
     <licenses>
         <license>
@@ -23,19 +23,20 @@
         <url>https://github.com/NationalSecurityAgency/datawave-spring-boot-starter</url>
     </scm>
     <properties>
-        <version.accumulo>1.10.2</version.accumulo>
+        <version.accumulo>2.1.0</version.accumulo>
+        <version.beanutils>1.9.4</version.beanutils>
         <version.dropwizard-metrics>4.1.2</version.dropwizard-metrics>
-        <version.in-memory-accumulo>1.10.3-SNAPSHOT</version.in-memory-accumulo>
-        <version.jackson>2.10.0.pr1</version.jackson>
+        <version.in-memory-accumulo>3.0-SNAPSHOT</version.in-memory-accumulo>
+        <version.jackson>2.10.1</version.jackson>
         <version.jzlib>1.1.3</version.jzlib>
         <version.metrics-spring>3.1.3</version.metrics-spring>
-        <version.microservice.accumulo-utils>1.6-SNAPSHOT</version.microservice.accumulo-utils>
-        <version.microservice.authorization.api>2.0-SNAPSHOT</version.microservice.authorization.api>
-        <version.microservice.base-rest-responses>1.3-SNAPSHOT</version.microservice.base-rest-responses>
-        <version.microservice.cache-starter>2.0-SNAPSHOT</version.microservice.cache-starter>
-        <version.microservice.common-utils>1.2-SNAPSHOT</version.microservice.common-utils>
-        <version.microservice.metadata-utils>1.14-SNAPSHOT</version.microservice.metadata-utils>
-        <version.microservice.metrics.reporter>1.4-SNAPSHOT</version.microservice.metrics.reporter>
+        <version.microservice.accumulo-utils>3.0-SNAPSHOT</version.microservice.accumulo-utils>
+        <version.microservice.authorization.api>3.0-SNAPSHOT</version.microservice.authorization.api>
+        <version.microservice.base-rest-responses>3.0-SNAPSHOT</version.microservice.base-rest-responses>
+        <version.microservice.cache-starter>3.0-SNAPSHOT</version.microservice.cache-starter>
+        <version.microservice.common-utils>2.0-SNAPSHOT</version.microservice.common-utils>
+        <version.microservice.metadata-utils>3.0-SNAPSHOT</version.microservice.metadata-utils>
+        <version.microservice.metrics.reporter>2.0-SNAPSHOT</version.microservice.metrics.reporter>
         <version.protostuff>1.6.2</version.protostuff>
         <version.springdoc>1.6.9</version.springdoc>
     </properties>
@@ -55,6 +56,11 @@
                 <groupId>com.ryantenney.metrics</groupId>
                 <artifactId>metrics-spring</artifactId>
                 <version>${version.metrics-spring}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${version.beanutils}</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave</groupId>
@@ -84,12 +90,36 @@
                 <exclusions>
                     <!-- Exclude log4j since with spring boot we're using log4j2 -->
                     <exclusion>
-                        <artifactId>log4j</artifactId>
-                        <groupId>log4j</groupId>
+                        <artifactId>*</artifactId>
+                        <groupId>org.apache.logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>junit</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>io.opentelemetry</groupId>
+                    </exclusion>
+                    <!--
+                    NOTE: We have a severe allergy to netty-tcnative and its transitives.
+                    Causes surefire JVMs to core dump in dramatic fashion
+                    -->
+                    <exclusion>
+                        <artifactId>netty-tcnative</artifactId>
+                        <groupId>io.netty</groupId>
                     </exclusion>
                     <exclusion>
                         <artifactId>slf4j-reload4j</artifactId>
                         <groupId>org.slf4j</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>servlet-api</artifactId>
+                        <groupId>javax.servlet</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -113,14 +143,17 @@
                 <artifactId>metadata-utils</artifactId>
                 <version>${version.microservice.metadata-utils}</version>
                 <exclusions>
-                    <!-- Exclude log4j since with spring boot we're using log4j2 -->
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>log4j</artifactId>
-                        <groupId>log4j</groupId>
+                        <artifactId>*</artifactId>
+                        <groupId>org.apache.logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
                     </exclusion>
                     <exclusion>
                         <artifactId>slf4j-reload4j</artifactId>
@@ -164,6 +197,14 @@
                         <artifactId>servlet-api</artifactId>
                         <groupId>javax.servlet</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>org.apache.logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -184,11 +225,6 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-        <!-- TODO: JWO: this breaks serialization of wrapped elements in MapReduceJobDescription.java and QueryLogicDescription.java -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.fasterxml.jackson.dataformat</groupId>-->
-        <!--            <artifactId>jackson-dataformat-xml</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
@@ -212,6 +248,10 @@
         <dependency>
             <groupId>com.ryantenney.metrics</groupId>
             <artifactId>metrics-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
             <groupId>gov.nsa.datawave.microservice</groupId>

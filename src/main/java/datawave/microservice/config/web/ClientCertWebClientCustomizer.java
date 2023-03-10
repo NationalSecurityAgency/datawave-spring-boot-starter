@@ -2,6 +2,7 @@ package datawave.microservice.config.web;
 
 import io.netty.handler.ssl.SslContext;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
@@ -20,15 +21,22 @@ import reactor.netty.http.client.HttpClient;
 @ConditionalOnProperty(name = "server.outbound-ssl.enabled", matchIfMissing = true)
 public class ClientCertWebClientCustomizer implements WebClientCustomizer {
     private final SslContext sslContext;
+    private final boolean wiretap;
     
-    public ClientCertWebClientCustomizer(@Qualifier("outboundNettySslContext") SslContext sslContext) {
+    public ClientCertWebClientCustomizer(@Qualifier("outboundNettySslContext") SslContext sslContext,
+                    @Value("${reactor.netty.http.client.wiretap:false}") boolean wiretap) {
         this.sslContext = sslContext;
+        this.wiretap = wiretap;
     }
     
     @Override
     public void customize(org.springframework.web.reactive.function.client.WebClient.Builder webClientBuilder) {
-        HttpClient httpClient = HttpClient.create().secure(sslContextSpec -> sslContextSpec.sslContext(sslContext));
+        // @formatter:off
+        HttpClient httpClient = HttpClient.create()
+                .secure(sslContextSpec -> sslContextSpec.sslContext(sslContext))
+                .wiretap(wiretap);
         ReactorClientHttpConnector clientHttpConnector = new ReactorClientHttpConnector(httpClient);
         webClientBuilder.clientConnector(clientHttpConnector);
+        // @formatter:on
     }
 }

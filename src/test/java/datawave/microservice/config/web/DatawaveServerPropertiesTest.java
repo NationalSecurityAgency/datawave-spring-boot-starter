@@ -1,18 +1,19 @@
 package datawave.microservice.config.web;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Objects;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -78,136 +79,138 @@ public class DatawaveServerPropertiesTest {
     
     @Test
     public void testWithSslEnabledAndMissingKeyStore() {
-        BeanCreationException expectedException = assertThrows(BeanCreationException.class, () -> {
-            // @formatter:off
-            TestPropertyValues.of(
+        // @formatter:off
+        TestPropertyValues.of(
 //                "server.outbound-ssl.keyStore=testKeyStore",
-                    "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
-                    "server.outbound-ssl.keyStoreType=testKeyStoreType",
-                    "server.outbound-ssl.trustStore=testTrustStore",
-                    "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
-                    "server.outbound-ssl.trustStoreType=testTrustStoreType"
-            ).applyTo(context);
-            // @formatter:on
-            
-            context.refresh();
-        });
-            
-        assertThat(expectedException, notNullValue());
-        assertThat(Objects.requireNonNull(expectedException.getRootCause()).getMessage(),
-                        containsString("Field error in object 'server' on field 'outboundSsl.keyStore'"));
+                "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
+                "server.outbound-ssl.keyStoreType=testKeyStoreType",
+                "server.outbound-ssl.trustStore=testTrustStore",
+                "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
+                "server.outbound-ssl.trustStoreType=testTrustStoreType"
+        ).applyTo(context);
+        // @formatter:on
+        
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.keyStore'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingKeyStorePassword() {
-        BeanCreationException expectedException = assertThrows(BeanCreationException.class, () -> {
-            // @formatter:off
-            TestPropertyValues.of(
-                    "server.outbound-ssl.keyStore=testKeyStore",
+        // @formatter:off
+        TestPropertyValues.of(
+                "server.outbound-ssl.keyStore=testKeyStore",
 //                "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
-                    "server.outbound-ssl.keyStoreType=testKeyStoreType",
-                    "server.outbound-ssl.trustStore=testTrustStore",
-                    "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
-                    "server.outbound-ssl.trustStoreType=testTrustStoreType"
-            ).applyTo(context);
-            // @formatter:on
-            
-            context.refresh();
-        });
-            
-        assertThat(expectedException, notNullValue());
-        assertThat(Objects.requireNonNull(expectedException.getRootCause()).getMessage(),
-                        containsString("Field error in object 'server' on field 'outboundSsl.keyStorePassword'"));
+                "server.outbound-ssl.keyStoreType=testKeyStoreType",
+                "server.outbound-ssl.trustStore=testTrustStore",
+                "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
+                "server.outbound-ssl.trustStoreType=testTrustStoreType"
+        ).applyTo(context);
+        // @formatter:on
+        
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.keyStorePassword'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingKeyStoreType() {
-        BeanCreationException expectedException = assertThrows(BeanCreationException.class, () -> {
-            // @formatter:off
-            TestPropertyValues.of(
-                    "server.outbound-ssl.keyStore=testKeyStore",
-                    "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
+        // @formatter:off
+        TestPropertyValues.of(
+                "server.outbound-ssl.keyStore=testKeyStore",
+                "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
 //                "server.outbound-ssl.keyStoreType=testKeyStoreType",
-                    "server.outbound-ssl.trustStore=testTrustStore",
-                    "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
-                    "server.outbound-ssl.trustStoreType=testTrustStoreType"
-            ).applyTo(context);
-            // @formatter:on
-            
-            context.refresh();
-        });
-            
-        assertThat(expectedException, notNullValue());
-        assertThat(Objects.requireNonNull(expectedException.getRootCause()).getMessage(),
-                        containsString("Field error in object 'server' on field 'outboundSsl.keyStoreType'"));
+                "server.outbound-ssl.trustStore=testTrustStore",
+                "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
+                "server.outbound-ssl.trustStoreType=testTrustStoreType"
+        ).applyTo(context);
+        // @formatter:on
+        
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.keyStoreType'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingTrustStore() {
-        BeanCreationException expectedException = assertThrows(BeanCreationException.class, () -> {
-            // @formatter:off
-            TestPropertyValues.of(
-                    "server.outbound-ssl.keyStore=testKeyStore",
-                    "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
-                    "server.outbound-ssl.keyStoreType=testKeyStoreType",
+        // @formatter:off
+        TestPropertyValues.of(
+                "server.outbound-ssl.keyStore=testKeyStore",
+                "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
+                "server.outbound-ssl.keyStoreType=testKeyStoreType",
 //                "server.outbound-ssl.trustStore=testTrustStore",
-                    "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
-                    "server.outbound-ssl.trustStoreType=testTrustStoreType"
-            ).applyTo(context);
-            // @formatter:on
-            
-            context.refresh();
-        });
-            
-        assertThat(expectedException, notNullValue());
-        assertThat(Objects.requireNonNull(expectedException.getRootCause()).getMessage(),
-                        containsString("Field error in object 'server' on field 'outboundSsl.trustStore'"));
+                "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
+                "server.outbound-ssl.trustStoreType=testTrustStoreType"
+        ).applyTo(context);
+        // @formatter:on
+        
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.trustStore'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingTrustStorePassword() {
-        BeanCreationException expectedException = assertThrows(BeanCreationException.class, () -> {
-            // @formatter:off
-            TestPropertyValues.of(
-                    "server.outbound-ssl.keyStore=testKeyStore",
-                    "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
-                    "server.outbound-ssl.keyStoreType=testKeyStoreType",
-                    "server.outbound-ssl.trustStore=testTrustStore",
+        // @formatter:off
+        TestPropertyValues.of(
+                "server.outbound-ssl.keyStore=testKeyStore",
+                "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
+                "server.outbound-ssl.keyStoreType=testKeyStoreType",
+                "server.outbound-ssl.trustStore=testTrustStore",
 //                "server.outbound-ssl.trustStorePassword=testTrustStorePassword",
-                    "server.outbound-ssl.trustStoreType=testTrustStoreType"
-            ).applyTo(context);
-            // @formatter:on
-            
-            context.refresh();
-        });
-            
-        assertThat(expectedException, notNullValue());
-        assertThat(Objects.requireNonNull(expectedException.getRootCause()).getMessage(),
-                        containsString("Field error in object 'server' on field 'outboundSsl.trustStorePassword'"));
+                "server.outbound-ssl.trustStoreType=testTrustStoreType"
+        ).applyTo(context);
+        // @formatter:on
+        
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.trustStorePassword'"));
     }
     
     @Test
     public void testWithSslEnabledAndMissingTrustStoreType() {
-        BeanCreationException expectedException = assertThrows(BeanCreationException.class, () -> {
-            // @formatter:off
-            TestPropertyValues.of(
-                    "server.outbound-ssl.keyStore=testKeyStore",
-                    "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
-                    "server.outbound-ssl.keyStoreType=testKeyStoreType",
-                    "server.outbound-ssl.trustStore=testTrustStore",
-                    "server.outbound-ssl.trustStorePassword=testTrustStorePassword"
+        // @formatter:off
+        TestPropertyValues.of(
+                "server.outbound-ssl.keyStore=testKeyStore",
+                "server.outbound-ssl.keyStorePassword=testKeyStorePassword",
+                "server.outbound-ssl.keyStoreType=testKeyStoreType",
+                "server.outbound-ssl.trustStore=testTrustStore",
+                "server.outbound-ssl.trustStorePassword=testTrustStorePassword"
 //                "server.outbound-ssl.trustStoreType=testTrustStoreType"
-            ).applyTo(context);
-            // @formatter:on
-            
-            context.refresh();
-        });
-            
-        assertThat(expectedException, notNullValue());
-        assertThat(Objects.requireNonNull(expectedException.getRootCause()).getMessage(),
-                        containsString("Field error in object 'server' on field 'outboundSsl.trustStoreType'"));
+        ).applyTo(context);
+        // @formatter:on
+        
+        BeanCreationException thrown = assertThrows(BeanCreationException.class, context::refresh);
+        assertThat(thrown, bindValidationError("Field error in object 'server' on field 'outboundSsl.trustStoreType'"));
     }
     
     @EnableConfigurationProperties(DatawaveServerProperties.class)
     public static class Setup {}
+    
+    private static CauseMessageMatcher bindValidationError(String message) {
+        return new CauseMessageMatcher(BindValidationException.class, message);
+    }
+    
+    private static class CauseMessageMatcher extends TypeSafeMatcher<Throwable> {
+        private Class<?> causeClass;
+        private Matcher<?> matcher;
+        
+        public CauseMessageMatcher(Class<? extends Throwable> causeClass, String causeMessageSubstring) {
+            this(causeClass, containsString(causeMessageSubstring));
+        }
+        
+        public CauseMessageMatcher(Class<? extends Throwable> causeClass, Matcher<?> matcher) {
+            this.causeClass = causeClass;
+            this.matcher = matcher;
+        }
+        
+        @Override
+        protected boolean matchesSafely(Throwable throwable) {
+            Throwable cause = throwable.getCause();
+            while (cause != null && !cause.getClass().isAssignableFrom(causeClass)) {
+                cause = cause.getCause();
+            }
+            return cause != null && matcher.matches(cause.getMessage());
+        }
+        
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("expects type ").appendValue(causeClass).appendText(" and a message ").appendValue(matcher);
+        }
+    }
 }
