@@ -281,16 +281,14 @@ public class MicroserviceAuthorizationsUtilTest {
     
     @Test
     public void testMergePrincipals() {
-        DatawaveUserDetails merged = AuthorizationsUtil.mergeProxiedUserDetails(
-                        datawaveUsers -> new DatawaveUserDetails(datawaveUsers, System.currentTimeMillis()), proxiedUserDetails, remoteUserDetails);
+        DatawaveUserDetails merged = AuthorizationsUtil.mergeProxiedUserDetails(proxiedUserDetails, remoteUserDetails);
         assertPrincipalEquals(overallUserDetails, merged);
     }
     
     @Test
     public void testCannotMergePrincipal() {
         assertThrows(IllegalArgumentException.class, () -> {
-            AuthorizationsUtil.mergeProxiedUserDetails(datawaveUsers -> new DatawaveUserDetails(datawaveUsers, System.currentTimeMillis()),
-                            proxiedServerDetails1, proxiedServerDetails2);
+            AuthorizationsUtil.mergeProxiedUserDetails(proxiedServerDetails1, proxiedServerDetails2);
         });
     }
     

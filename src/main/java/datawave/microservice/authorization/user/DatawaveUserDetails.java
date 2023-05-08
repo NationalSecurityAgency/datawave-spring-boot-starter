@@ -3,13 +3,11 @@ package datawave.microservice.authorization.user;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.DatawaveUser.UserType;
 import datawave.security.authorization.ProxiedUserDetails;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.security.util.ProxiedEntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,9 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,18 +25,21 @@ import java.util.stream.Collectors;
  */
 @XmlRootElement
 public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
-    private String username;
-    private List<DatawaveUser> proxiedUsers = new ArrayList<>();
-    private List<SimpleGrantedAuthority> roles;
-    private long creationTime;
+    private final String username;
+    private final List<DatawaveUser> proxiedUsers = new ArrayList<>();
+    private final List<SimpleGrantedAuthority> roles;
+    private final long creationTime;
     
-    private final Set<String> requiredRoles = new HashSet<>();
+    DatawaveUserDetails(Collection<? extends DatawaveUser> proxiedUsers, List<SimpleGrantedAuthority> roles, long creationTime) {
+        this.proxiedUsers.addAll(proxiedUsers);
+        this.username = DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream().map(DatawaveUser::getName).collect(Collectors.joining(" -> "));
+        this.roles = (roles != null) ? roles : getPrimaryUser().getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        this.creationTime = creationTime;
+    }
     
     @JsonCreator
     public DatawaveUserDetails(@JsonProperty("proxiedUsers") Collection<? extends DatawaveUser> proxiedUsers, @JsonProperty("creationTime") long creationTime) {
-        this.proxiedUsers.addAll(proxiedUsers);
-        this.username = DatawaveUserDetails.orderProxiedUsers(this.proxiedUsers).stream().map(DatawaveUser::getName).collect(Collectors.joining(" -> "));
-        this.creationTime = creationTime;
+        this(proxiedUsers, null, creationTime);
     }
     
     public DatawaveUserDetails(Collection<? extends DatawaveUser> proxiedUsers) {
@@ -188,11 +187,6 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (roles == null) {
-            boolean removeRequiredRoles = getProxiedUsers().stream().anyMatch(u -> Collections.disjoint(u.getRoles(), requiredRoles));
-            this.roles = getPrimaryUser().getRoles().stream().filter(r -> removeRequiredRoles || !requiredRoles.contains(r)).map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
-        }
         return roles;
     }
     
@@ -236,14 +230,9 @@ public class DatawaveUserDetails implements ProxiedUserDetails, UserDetails {
         return creationTime;
     }
     
-    @JsonIgnore
-    @Autowired
-    private void setRequiredRoles(DatawaveSecurityProperties securityProperties) {
-        this.requiredRoles.addAll(securityProperties.getRequiredRoles());
-    }
-    
     @Override
-    public ProxiedUserDetails newInstance(List<DatawaveUser> proxiedUsers) {
-        return new DatawaveUserDetails(proxiedUsers);
+    @SuppressWarnings("unchecked")
+    public <T extends ProxiedUserDetails> T newInstance(List<DatawaveUser> proxiedUsers) {
+        return (T) new DatawaveUserDetails(proxiedUsers);
     }
 }
