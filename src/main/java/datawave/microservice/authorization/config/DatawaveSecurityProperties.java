@@ -6,7 +6,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,6 +26,17 @@ public class DatawaveSecurityProperties {
     private List<String> allowedCallers = new ArrayList<>();
     private boolean requireSsl;
     private List<String> managerRoles = new ArrayList<>();
+    
+    /**
+     * The denied access role is a single role that must not be present in the proxy chain. If the role is present, then access will be denied for the user.
+     */
+    private String deniedAccessRole = null;
+    
+    /**
+     * Required roles are a set of roles such that each entity in a proxy chain must have at least one of the required roles. If that is not the case, then the
+     * user role filter will ensure that none of the required roles are included in the response to getAuthorities.
+     */
+    private Set<String> requiredRoles = new HashSet<>(Arrays.asList("AuthorizedUser", "AuthorizedServer", "AuthorizedQueryServer"));
     
     public boolean isUseTrustedSubjectHeaders() {
         return useTrustedSubjectHeaders;
@@ -78,6 +92,22 @@ public class DatawaveSecurityProperties {
     
     public void setManagerRoles(List<String> managerRoles) {
         this.managerRoles = managerRoles;
+    }
+    
+    public String getDeniedAccessRole() {
+        return deniedAccessRole;
+    }
+    
+    public void setDeniedAccessRole(String deniedAccessRole) {
+        this.deniedAccessRole = deniedAccessRole;
+    }
+    
+    public Set<String> getRequiredRoles() {
+        return requiredRoles;
+    }
+    
+    public void setRequiredRoles(Set<String> requiredRoles) {
+        this.requiredRoles = requiredRoles;
     }
     
     public Jwt getJwt() {

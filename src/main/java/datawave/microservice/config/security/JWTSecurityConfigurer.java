@@ -5,12 +5,14 @@ import datawave.microservice.authorization.Http403ForbiddenEntryPoint;
 import datawave.microservice.authorization.config.DatawaveSecurityProperties;
 import datawave.microservice.authorization.jwt.JWTAuthenticationFilter;
 import datawave.microservice.authorization.jwt.JWTAuthenticationProvider;
+import datawave.microservice.authorization.service.RemoteAuthorizationServiceUserDetailsService;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 
@@ -26,6 +29,7 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
  * Configures security for the spring boot application. This config ensures that only listed certificate DNs can call us, and that we look up the proxied
  * users/servers using the supplied authorization service.
  */
+@Profile("!" + RemoteAuthorizationServiceUserDetailsService.ACTIVATION_PROFILE)
 @Order(SecurityProperties.BASIC_AUTH_ORDER - 2)
 @Configuration
 @ConditionalOnWebApplication
@@ -81,6 +85,9 @@ public class JWTSecurityConfigurer extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(allowedCallersFilter, X509AuthenticationFilter.class);
         // Allow JWT authentication
         http.addFilterAfter(jwtFilter, X509AuthenticationFilter.class);
+        // Block users with denied-access role
+        DeniedAccessRoleFilter deniedAccessRoleFilter = new DeniedAccessRoleFilter(securityProperties);
+        http.addFilterAfter(deniedAccessRoleFilter, AbstractPreAuthenticatedProcessingFilter.class);
     }
     
     protected AllowedCallersFilter getAllowedCallersFilter(DatawaveSecurityProperties securityProperties) {

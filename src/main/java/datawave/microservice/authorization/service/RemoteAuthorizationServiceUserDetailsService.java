@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import datawave.microservice.authorization.preauth.ProxiedEntityPreauthPrincipal;
 import datawave.microservice.authorization.preauth.ProxiedEntityX509Filter;
 import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetailsFactory;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.JWTTokenHandler;
 import datawave.security.authorization.SubjectIssuerDNPair;
@@ -41,12 +42,15 @@ public class RemoteAuthorizationServiceUserDetailsService implements Authenticat
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final WebClient webClient;
     private final JWTTokenHandler jwtTokenHandler;
+    private final DatawaveUserDetailsFactory userDetailsFactory;
     
     @Autowired
     public RemoteAuthorizationServiceUserDetailsService(WebClient.Builder webClientBuilder, JWTTokenHandler jwtTokenHandler,
+                    DatawaveUserDetailsFactory userDetailsFactory,
                     @Value("${datawave.authorization.uri:https://authorization:8443/authorization/v1/authorize}") String authorizationUri) {
         this.webClient = webClientBuilder.baseUrl(authorizationUri).build();
         this.jwtTokenHandler = jwtTokenHandler;
+        this.userDetailsFactory = userDetailsFactory;
     }
     
     @Override
@@ -73,7 +77,7 @@ public class RemoteAuthorizationServiceUserDetailsService implements Authenticat
             if (jwt != null) {
                 Collection<DatawaveUser> principals = jwtTokenHandler.createUsersFromToken(jwt);
                 long createTime = principals.stream().map(DatawaveUser::getCreationTime).min(Long::compareTo).orElse(System.currentTimeMillis());
-                return new DatawaveUserDetails(principals, createTime);
+                return userDetailsFactory.create(principals, createTime);
             } else {
                 throw new UsernameNotFoundException("No entities found for " + principal.getUsername());
             }
