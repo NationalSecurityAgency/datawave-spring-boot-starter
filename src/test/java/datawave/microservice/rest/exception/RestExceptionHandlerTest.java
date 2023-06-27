@@ -1,8 +1,11 @@
 package datawave.microservice.rest.exception;
 
-import datawave.microservice.config.web.Constants;
-import datawave.webservice.query.exception.QueryException;
-import datawave.webservice.result.VoidResponse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,13 +19,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import datawave.microservice.config.web.Constants;
+import datawave.webservice.query.exception.QueryException;
+import datawave.webservice.result.VoidResponse;
+import reactor.core.publisher.Mono;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles({"exceptionMapperTest", "permitAllWebTest"})

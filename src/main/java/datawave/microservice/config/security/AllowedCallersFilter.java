@@ -1,7 +1,14 @@
 package datawave.microservice.config.security;
 
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
-import datawave.security.authorization.SubjectIssuerDNPair;
+import java.io.IOException;
+import java.security.cert.X509Certificate;
+import java.util.List;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
@@ -12,13 +19,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.security.cert.X509Certificate;
-import java.util.List;
+import datawave.microservice.authorization.config.DatawaveSecurityProperties;
+import datawave.security.authorization.SubjectIssuerDNPair;
 
 public class AllowedCallersFilter extends OncePerRequestFilter {
     private final Logger logger = LoggerFactory.getLogger(getClass());

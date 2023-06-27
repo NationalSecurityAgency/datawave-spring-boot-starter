@@ -1,8 +1,5 @@
 package datawave.microservice.rest.exception;
 
-import datawave.microservice.config.web.Constants;
-import datawave.webservice.query.exception.QueryException;
-import datawave.webservice.result.VoidResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -17,6 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.util.WebUtils;
+
+import datawave.microservice.config.web.Constants;
+import datawave.webservice.query.exception.QueryException;
+import datawave.webservice.result.VoidResponse;
 
 @ControllerAdvice
 @ConditionalOnClass(QueryException.class)

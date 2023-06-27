@@ -1,14 +1,10 @@
 package datawave.microservice.authorization.service;
 
-import com.codahale.metrics.annotation.Timed;
-import datawave.microservice.authorization.preauth.ProxiedEntityPreauthPrincipal;
-import datawave.microservice.authorization.preauth.ProxiedEntityX509Filter;
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.microservice.authorization.user.DatawaveUserDetailsFactory;
-import datawave.security.authorization.DatawaveUser;
-import datawave.security.authorization.JWTTokenHandler;
-import datawave.security.authorization.SubjectIssuerDNPair;
-import datawave.security.util.ProxiedEntityUtils;
+import java.util.Collection;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +17,16 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Collection;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.codahale.metrics.annotation.Timed;
+
+import datawave.microservice.authorization.preauth.ProxiedEntityPreauthPrincipal;
+import datawave.microservice.authorization.preauth.ProxiedEntityX509Filter;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetailsFactory;
+import datawave.security.authorization.DatawaveUser;
+import datawave.security.authorization.JWTTokenHandler;
+import datawave.security.authorization.SubjectIssuerDNPair;
+import datawave.security.util.ProxiedEntityUtils;
 
 /**
  * An {@link AuthenticationUserDetailsService} that retrieves user information from a remote authorization service for a set of proxied entity names, and

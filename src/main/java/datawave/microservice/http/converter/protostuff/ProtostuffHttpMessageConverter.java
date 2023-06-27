@@ -1,9 +1,12 @@
 package datawave.microservice.http.converter.protostuff;
 
-import io.protostuff.LinkedBuffer;
-import io.protostuff.Message;
-import io.protostuff.ProtostuffIOUtil;
-import io.protostuff.Schema;
+import static org.springframework.util.Assert.state;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -12,12 +15,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.lang.NonNull;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-
-import static org.springframework.util.Assert.state;
+import io.protostuff.LinkedBuffer;
+import io.protostuff.Message;
+import io.protostuff.ProtostuffIOUtil;
+import io.protostuff.Schema;
 
 /**
  * An {@link org.springframework.http.converter.HttpMessageConverter} that reads/writes messages that implement the Protostuff {@link Message} interface.

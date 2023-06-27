@@ -1,16 +1,17 @@
 package datawave.microservice.authorization.config;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Datawave-specific extensions to {@link SecurityProperties}

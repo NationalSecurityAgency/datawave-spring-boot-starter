@@ -1,11 +1,12 @@
 package datawave.microservice.config.security.util;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.validation.constraints.NotEmpty;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "datawave.security.util")

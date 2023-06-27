@@ -1,25 +1,28 @@
 package datawave.microservice.config.web;
 
-import com.google.common.collect.Lists;
-import datawave.microservice.validator.NotBlankIfFieldEquals;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.boot.web.server.Ssl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.validation.annotation.Validated;
+import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ENTITIES_HEADER;
+import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ISSUERS_HEADER;
+import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ISSUER_DN_HEADER;
+import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.SUBJECT_DN_HEADER;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ENTITIES_HEADER;
-import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ISSUERS_HEADER;
-import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ISSUER_DN_HEADER;
-import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.SUBJECT_DN_HEADER;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.web.server.Ssl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.validation.annotation.Validated;
+
+import com.google.common.collect.Lists;
+
+import datawave.microservice.validator.NotBlankIfFieldEquals;
 
 @Validated
 @ConfigurationProperties(prefix = "server", ignoreInvalidFields = true)

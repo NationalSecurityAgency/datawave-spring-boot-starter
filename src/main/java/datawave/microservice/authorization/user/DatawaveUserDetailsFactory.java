@@ -1,17 +1,18 @@
 package datawave.microservice.authorization.user;
 
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
-import datawave.security.authorization.DatawaveUser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
+
+import datawave.microservice.authorization.config.DatawaveSecurityProperties;
+import datawave.security.authorization.DatawaveUser;
 
 /**
  * Constructs DatawaveUserDetails instances with their roles limited by the required roles set specified in our configuration. This will be used to create

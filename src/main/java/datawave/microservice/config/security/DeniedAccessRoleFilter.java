@@ -1,6 +1,12 @@
 package datawave.microservice.config.security;
 
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.zookeeper.common.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import datawave.microservice.authorization.config.DatawaveSecurityProperties;
 
 public class DeniedAccessRoleFilter extends OncePerRequestFilter {
     private final Logger logger = LoggerFactory.getLogger(getClass());

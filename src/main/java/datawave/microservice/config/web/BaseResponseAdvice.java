@@ -1,6 +1,10 @@
 package datawave.microservice.config.web;
 
-import datawave.webservice.result.BaseResponse;
+import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADER;
+import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
+
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -12,10 +16,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.concurrent.TimeUnit;
-
-import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADER;
-import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
+import datawave.webservice.result.BaseResponse;
 
 /**
  * A {@link ControllerAdvice} that implements {@link ResponseBodyAdvice} in order to allow access to {@link BaseResponse} objects before they are written out to

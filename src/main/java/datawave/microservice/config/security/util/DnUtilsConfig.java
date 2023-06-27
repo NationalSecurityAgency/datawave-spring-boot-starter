@@ -1,10 +1,11 @@
 package datawave.microservice.config.security.util;
 
-import datawave.microservice.security.util.DnUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import datawave.microservice.security.util.DnUtils;
 
 @Configuration
 @ConditionalOnProperty(name = {"datawave.security.util.subjectDnPattern", "datawave.security.util.npeOuList"})

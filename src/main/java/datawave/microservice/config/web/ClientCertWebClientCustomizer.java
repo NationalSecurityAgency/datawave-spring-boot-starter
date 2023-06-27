@@ -1,6 +1,5 @@
 package datawave.microservice.config.web;
 
-import io.netty.handler.ssl.SslContext;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -9,6 +8,8 @@ import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
 import org.springframework.core.annotation.Order;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
+
+import io.netty.handler.ssl.SslContext;
 import reactor.netty.http.client.HttpClient;
 
 /**

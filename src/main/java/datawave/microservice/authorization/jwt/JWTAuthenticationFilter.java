@@ -1,5 +1,18 @@
 package datawave.microservice.authorization.jwt;
 
+import static datawave.microservice.config.web.Constants.REQUEST_LOGIN_TIME_ATTRIBUTE;
+import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -9,18 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.web.filter.GenericFilterBean;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import static datawave.microservice.config.web.Constants.REQUEST_LOGIN_TIME_ATTRIBUTE;
-import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
 
 /**
  * A security filter that expects to find an encoded JWT in the "Authorization" header in the request. The token is extracted from the header and passed along

@@ -1,12 +1,12 @@
 package datawave.microservice.config.discovery.rabbit;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.retry.annotation.Retryable;
-
-import java.util.List;
 
 public class RabbitDiscoveryInstanceProvider {
     private static Logger logger = LoggerFactory.getLogger(RabbitDiscoveryInstanceProvider.class);

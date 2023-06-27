@@ -1,13 +1,15 @@
 package datawave.microservice.config.metrics;
 
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.context.annotation.Configuration;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
-import datawave.metrics.MetricsReporterFactory;
-import org.springframework.context.annotation.Configuration;
 
-import java.util.concurrent.TimeUnit;
+import datawave.metrics.MetricsReporterFactory;
 
 /**
  * Configuration for annotated DropWizard metrics.

@@ -1,11 +1,5 @@
 package datawave.microservice.config.security;
 
-import com.google.common.base.Preconditions;
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
-import datawave.microservice.authorization.jwt.JWTAuthenticationFilter;
-import datawave.microservice.authorization.jwt.JWTAuthenticationProvider;
-import datawave.microservice.authorization.preauth.ProxiedEntityX509Filter;
-import datawave.microservice.authorization.service.RemoteAuthorizationServiceUserDetailsService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +11,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import com.google.common.base.Preconditions;
+
+import datawave.microservice.authorization.config.DatawaveSecurityProperties;
+import datawave.microservice.authorization.jwt.JWTAuthenticationFilter;
+import datawave.microservice.authorization.jwt.JWTAuthenticationProvider;
+import datawave.microservice.authorization.preauth.ProxiedEntityX509Filter;
+import datawave.microservice.authorization.service.RemoteAuthorizationServiceUserDetailsService;
 
 /**
  * Configures security for the spring boot application. This config is active only when the "remoteauth" profile has been specified, and this config overrides

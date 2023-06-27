@@ -1,8 +1,9 @@
 package datawave.microservice.http.converter.html;
 
+import org.springframework.lang.Nullable;
+
 import datawave.microservice.config.web.DatawaveServerProperties;
 import datawave.webservice.HtmlProvider;
-import org.springframework.lang.Nullable;
 
 /**
  * A {@link org.springframework.http.converter.HttpMessageConverter} that converts an {@link HtmlProvider} to HTML. This class does not support reading HTML and

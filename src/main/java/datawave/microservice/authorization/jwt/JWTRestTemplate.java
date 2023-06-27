@@ -1,7 +1,5 @@
 package datawave.microservice.authorization.jwt;
 
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.security.authorization.JWTTokenHandler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -10,6 +8,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
+
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.security.authorization.JWTTokenHandler;
 
 /**
  * An extended version of {@link RestTemplate} that provides convenience methods to ensure the JWT is passed with a request.
