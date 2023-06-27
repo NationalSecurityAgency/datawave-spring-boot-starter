@@ -1,13 +1,14 @@
 package datawave.microservice.authorization.jwt;
 
-import datawave.microservice.authorization.user.DatawaveUserDetails;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 
 /**
  * Represents the {@link Authentication} of a request that is secured with a JSON Web Token (JWT) found in the Authorization header.

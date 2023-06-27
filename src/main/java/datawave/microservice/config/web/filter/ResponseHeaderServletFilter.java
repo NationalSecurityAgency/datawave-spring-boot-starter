@@ -1,21 +1,22 @@
 package datawave.microservice.config.web.filter;
 
-import org.springframework.lang.NonNull;
-import org.springframework.security.web.util.OnCommittedResponseWrapper;
-import org.springframework.web.filter.OncePerRequestFilter;
+import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADER;
+import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
+import static datawave.microservice.config.web.Constants.RESPONSE_ORIGIN_HEADER;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADER;
-import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
-import static datawave.microservice.config.web.Constants.RESPONSE_ORIGIN_HEADER;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.lang.NonNull;
+import org.springframework.security.web.util.OnCommittedResponseWrapper;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 public class ResponseHeaderServletFilter extends OncePerRequestFilter {
     private final String origin;

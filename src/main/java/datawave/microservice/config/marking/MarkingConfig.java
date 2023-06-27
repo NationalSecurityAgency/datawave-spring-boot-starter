@@ -1,15 +1,17 @@
 package datawave.microservice.config.marking;
 
-import com.github.benmanes.caffeine.cache.CaffeineSpec;
-import datawave.cache.CollectionSafeKeyGenerator;
-import datawave.marking.ColumnVisibilitySecurityMarking;
-import datawave.marking.MarkingFunctions;
-import datawave.marking.SecurityMarking;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
+
+import datawave.cache.CollectionSafeKeyGenerator;
+import datawave.marking.ColumnVisibilitySecurityMarking;
+import datawave.marking.MarkingFunctions;
+import datawave.marking.SecurityMarking;
 
 /**
  * Provides default configuration for DATAWAVE {@link MarkingFunctions} and relates objects to be injected from the Spring Boot

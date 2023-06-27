@@ -1,9 +1,10 @@
 package datawave.microservice.authorization.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
-import datawave.security.authorization.JWTTokenHandler;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.server.Ssl;
@@ -12,10 +13,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
-import java.security.Key;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.util.concurrent.TimeUnit;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+
+import datawave.microservice.authorization.config.DatawaveSecurityProperties;
+import datawave.security.authorization.JWTTokenHandler;
 
 /**
  * Provides configuration for working with JWTs: Provides a {@link GuavaModule} bean which will be picked up automatically by Spring when it creates any

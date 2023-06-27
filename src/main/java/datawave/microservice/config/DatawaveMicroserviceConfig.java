@@ -1,7 +1,5 @@
 package datawave.microservice.config;
 
-import datawave.microservice.config.metrics.MetricsConfigurationProperties;
-import datawave.microservice.config.web.RestClientProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.cloud.bus.PathServiceMatcher;
@@ -10,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.AntPathMatcher;
+
+import datawave.microservice.config.metrics.MetricsConfigurationProperties;
+import datawave.microservice.config.web.RestClientProperties;
 
 /**
  * Configures default beans needed by DATAWAVE microservices.

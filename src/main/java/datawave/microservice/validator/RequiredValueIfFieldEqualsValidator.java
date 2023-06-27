@@ -1,11 +1,12 @@
 package datawave.microservice.validator;
 
-import org.apache.commons.beanutils.BeanUtils;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Objects;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * Implementation of {@link RequiredValueIfFieldEquals} validator.

@@ -1,11 +1,11 @@
 package datawave.microservice.authorization.preauth;
 
-import datawave.security.authorization.SubjectIssuerDNPair;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
+
+import datawave.security.authorization.SubjectIssuerDNPair;
 
 /**
  * A principal object representing a pre-authenticated caller principal (e.g., authenticated with X.509 certificates) that is acting as a proxy for a number of

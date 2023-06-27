@@ -1,6 +1,10 @@
 package datawave.microservice.http.converter.html;
 
-import datawave.microservice.config.web.DatawaveServerProperties;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.IOException;
+import java.util.Collections;
+
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -9,10 +13,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.lang.Nullable;
 
-import java.io.IOException;
-import java.util.Collections;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import datawave.microservice.config.web.DatawaveServerProperties;
 
 abstract public class AbstractDatawaveHttpMessageConverter<T> extends AbstractHttpMessageConverter<T> {
     protected final DatawaveServerProperties datawaveServerProperties;

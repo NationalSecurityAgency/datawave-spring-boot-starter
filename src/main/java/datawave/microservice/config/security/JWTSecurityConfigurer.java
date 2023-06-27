@@ -1,11 +1,5 @@
 package datawave.microservice.config.security;
 
-import com.google.common.base.Preconditions;
-import datawave.microservice.authorization.Http403ForbiddenEntryPoint;
-import datawave.microservice.authorization.config.DatawaveSecurityProperties;
-import datawave.microservice.authorization.jwt.JWTAuthenticationFilter;
-import datawave.microservice.authorization.jwt.JWTAuthenticationProvider;
-import datawave.microservice.authorization.service.RemoteAuthorizationServiceUserDetailsService;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -24,6 +18,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.authentication.preauth.x509.X509AuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
+
+import com.google.common.base.Preconditions;
+
+import datawave.microservice.authorization.Http403ForbiddenEntryPoint;
+import datawave.microservice.authorization.config.DatawaveSecurityProperties;
+import datawave.microservice.authorization.jwt.JWTAuthenticationFilter;
+import datawave.microservice.authorization.jwt.JWTAuthenticationProvider;
+import datawave.microservice.authorization.service.RemoteAuthorizationServiceUserDetailsService;
 
 /**
  * Configures security for the spring boot application. This config ensures that only listed certificate DNs can call us, and that we look up the proxied

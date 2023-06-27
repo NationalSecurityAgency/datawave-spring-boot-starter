@@ -1,12 +1,14 @@
 package datawave.microservice.config.metrics;
 
-import com.codahale.metrics.ScheduledReporter;
-import datawave.metrics.MetricsReporterFactory;
-import datawave.metrics.NoOpMetricsReporterFactory;
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-import java.util.concurrent.TimeUnit;
+import com.codahale.metrics.ScheduledReporter;
+
+import datawave.metrics.MetricsReporterFactory;
+import datawave.metrics.NoOpMetricsReporterFactory;
 
 /**
  * {@link ConfigurationProperties} for a dropwizard {@link ScheduledReporter}.

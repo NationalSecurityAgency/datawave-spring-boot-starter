@@ -1,19 +1,20 @@
 package datawave.microservice.config.web.filter;
 
-import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADER;
+import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
+import static datawave.microservice.config.web.Constants.RESPONSE_ORIGIN_HEADER;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-import static datawave.microservice.config.web.Constants.OPERATION_TIME_MS_HEADER;
-import static datawave.microservice.config.web.Constants.REQUEST_START_TIME_NS_ATTRIBUTE;
-import static datawave.microservice.config.web.Constants.RESPONSE_ORIGIN_HEADER;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+
+import reactor.core.publisher.Mono;
 
 public class ResponseHeaderWebFilter implements WebFilter, Ordered {
     

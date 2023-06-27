@@ -1,10 +1,10 @@
 package datawave.microservice.authorization.jwt;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
 import java.util.Collection;
 import java.util.Collections;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * A holder for an unparsed, unvalidated JWT authorization token.

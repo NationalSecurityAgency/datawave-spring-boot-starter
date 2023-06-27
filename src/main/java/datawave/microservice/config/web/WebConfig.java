@@ -1,17 +1,9 @@
 package datawave.microservice.config.web;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-import datawave.microservice.config.web.DatawaveServerProperties.Cors;
-import datawave.microservice.config.web.filter.ResponseHeaderServletFilter;
-import datawave.microservice.config.web.filter.ResponseHeaderWebFilter;
-import datawave.microservice.http.converter.html.BannerProvider;
-import datawave.microservice.http.converter.html.HtmlProviderHttpMessageConverter;
-import datawave.microservice.http.converter.html.VoidResponseHttpMessageConverter;
-import datawave.microservice.http.converter.protostuff.ProtostuffHttpMessageConverter;
-import datawave.webservice.HtmlProvider;
-import datawave.webservice.result.VoidResponse;
+import java.util.List;
+
+import javax.servlet.DispatcherType;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -29,8 +21,19 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.servlet.DispatcherType;
-import java.util.List;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+
+import datawave.microservice.config.web.DatawaveServerProperties.Cors;
+import datawave.microservice.config.web.filter.ResponseHeaderServletFilter;
+import datawave.microservice.config.web.filter.ResponseHeaderWebFilter;
+import datawave.microservice.http.converter.html.BannerProvider;
+import datawave.microservice.http.converter.html.HtmlProviderHttpMessageConverter;
+import datawave.microservice.http.converter.html.VoidResponseHttpMessageConverter;
+import datawave.microservice.http.converter.protostuff.ProtostuffHttpMessageConverter;
+import datawave.webservice.HtmlProvider;
+import datawave.webservice.result.VoidResponse;
 
 /**
  * Web configuration for Datawave microservices. TODO: We have only setup configuration here for a servlet-based web application. Additional work needs to be

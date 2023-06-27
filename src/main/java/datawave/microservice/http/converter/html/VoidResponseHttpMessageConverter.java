@@ -1,19 +1,21 @@
 package datawave.microservice.http.converter.html;
 
-import datawave.microservice.config.web.DatawaveServerProperties;
-import datawave.webservice.query.exception.QueryExceptionType;
-import datawave.webservice.result.VoidResponse;
-import org.springframework.http.HttpOutputMessage;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.lang.Nullable;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import static org.springframework.util.Assert.state;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.springframework.util.Assert.state;
+import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.lang.Nullable;
+
+import datawave.microservice.config.web.DatawaveServerProperties;
+import datawave.webservice.query.exception.QueryExceptionType;
+import datawave.webservice.result.VoidResponse;
 
 /**
  * A {@link org.springframework.http.converter.HttpMessageConverter} that writes a {@link VoidResponse} to HTML. This class does not support reading HTML and

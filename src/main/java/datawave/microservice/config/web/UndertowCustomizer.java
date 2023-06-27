@@ -1,7 +1,5 @@
 package datawave.microservice.config.web;
 
-import io.undertow.Undertow;
-import io.undertow.UndertowOptions;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,6 +14,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.xnio.Options;
+
+import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 
 /**
  * General Undertow customization for DATAWAVE use. This configuration applies to either a Servlet or Reactive Undertow server.
