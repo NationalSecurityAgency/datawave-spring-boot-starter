@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.zookeeper.common.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,7 +28,7 @@ public class DeniedAccessRoleFilter extends OncePerRequestFilter {
     
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (!StringUtils.isEmpty(securityProperties.getDeniedAccessRole())) {
+        if (securityProperties.getDeniedAccessRole() != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
                             .anyMatch(role -> role.equals(securityProperties.getDeniedAccessRole()))) {
