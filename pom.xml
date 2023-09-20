@@ -23,7 +23,7 @@
         <url>https://github.com/NationalSecurityAgency/datawave-spring-boot-starter</url>
     </scm>
     <properties>
-        <version.accumulo>2.1.0</version.accumulo>
+        <version.accumulo>2.1.1</version.accumulo>
         <version.beanutils>1.9.4</version.beanutils>
         <version.dropwizard-metrics>4.1.2</version.dropwizard-metrics>
         <version.in-memory-accumulo>3.0-SNAPSHOT</version.in-memory-accumulo>
