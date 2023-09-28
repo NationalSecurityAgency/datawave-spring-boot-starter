@@ -101,10 +101,6 @@
                         <artifactId>*</artifactId>
                         <groupId>junit</groupId>
                     </exclusion>
-                    <exclusion>
-                        <artifactId>*</artifactId>
-                        <groupId>io.opentelemetry</groupId>
-                    </exclusion>
                     <!--
                     NOTE: We have a severe allergy to netty-tcnative and its transitives.
                     Causes surefire JVMs to core dump in dramatic fashion
