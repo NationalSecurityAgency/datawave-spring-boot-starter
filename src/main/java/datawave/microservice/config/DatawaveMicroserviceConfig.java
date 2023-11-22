@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.cloud.bus.PathServiceMatcher;
 import org.springframework.cloud.bus.ServiceMatcher;
@@ -58,8 +58,8 @@ public class DatawaveMicroserviceConfig {
     }
     
     @Bean
-    @ConditionalOnBean(name = "jwtTokenHandler")
     @Qualifier("serverUserDetailsSupplier")
+    @ConditionalOnWebApplication
     public Supplier<DatawaveUserDetails> serverUserDetailsSupplier(JWTTokenHandler jwtTokenHandler,
                     @Qualifier("outboundNettySslContext") SslContext nettySslContext, WebClient.Builder webClientBuilder,
                     @Value("${datawave.authorization.uri:https://authorization:8443/authorization/v1/authorize}") String authorizationUri) {
