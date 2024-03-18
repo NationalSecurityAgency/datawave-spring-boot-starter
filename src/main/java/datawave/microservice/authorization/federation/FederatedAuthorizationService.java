@@ -27,6 +27,8 @@ import datawave.webservice.result.GenericResponse;
 public class FederatedAuthorizationService implements UserOperations {
     private static final Logger log = LoggerFactory.getLogger(FederatedAuthorizationService.class);
     
+    public static final String INCLUDE_REMOTE_SERVICES = "includeRemoteServices";
+    
     private FederatedAuthorizationProperties federatedAuthorizationProperties;
     private final WebClient webClient;
     private AuthorizationsListSupplier authorizationsListSupplier;
