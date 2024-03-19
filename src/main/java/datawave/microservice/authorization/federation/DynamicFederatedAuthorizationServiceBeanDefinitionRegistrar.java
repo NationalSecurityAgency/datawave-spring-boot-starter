@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.core.env.Environment;
 
-import datawave.microservice.authorization.federation.config.FederatedAuthorizationProperties;
+import datawave.microservice.authorization.federation.config.FederatedAuthorizationServiceProperties;
 
 /**
  * This class is used to dynamically create and register FederatedAuthorizationService beans via properties.
@@ -23,12 +23,12 @@ import datawave.microservice.authorization.federation.config.FederatedAuthorizat
 public class DynamicFederatedAuthorizationServiceBeanDefinitionRegistrar implements BeanDefinitionRegistryPostProcessor {
     
     public static final String FEDERATED_AUTHORIZATION_SERVICE_PREFIX = "datawave.authorization.federation.services";
-    private final Map<String,FederatedAuthorizationProperties> federatedAuthorizationProperties;
+    private final Map<String,FederatedAuthorizationServiceProperties> federatedAuthorizationProperties;
     
     public DynamicFederatedAuthorizationServiceBeanDefinitionRegistrar(Environment environment) {
         // @formatter:off
         federatedAuthorizationProperties = Binder.get(environment)
-                .bind(FEDERATED_AUTHORIZATION_SERVICE_PREFIX, Bindable.mapOf(String.class, FederatedAuthorizationProperties.class))
+                .bind(FEDERATED_AUTHORIZATION_SERVICE_PREFIX, Bindable.mapOf(String.class, FederatedAuthorizationServiceProperties.class))
                 .orElse(new HashMap<>());
         // @formatter:off
     }

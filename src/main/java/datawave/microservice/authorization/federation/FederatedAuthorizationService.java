@@ -16,24 +16,27 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import datawave.microservice.authorization.config.AuthorizationsListSupplier;
-import datawave.microservice.authorization.federation.config.FederatedAuthorizationProperties;
+import datawave.microservice.authorization.federation.config.FederatedAuthorizationServiceProperties;
+import datawave.microservice.authorization.federation.config.FederatedAuthorizationServiceProperties.RetryTimeoutProperties;
 import datawave.security.authorization.AuthorizationException;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.ProxiedUserDetails;
 import datawave.security.authorization.UserOperations;
 import datawave.user.AuthorizationsListBase;
 import datawave.webservice.result.GenericResponse;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 public class FederatedAuthorizationService implements UserOperations {
     private static final Logger log = LoggerFactory.getLogger(FederatedAuthorizationService.class);
     
     public static final String INCLUDE_REMOTE_SERVICES = "includeRemoteServices";
     
-    private FederatedAuthorizationProperties federatedAuthorizationProperties;
+    private FederatedAuthorizationServiceProperties federatedAuthorizationProperties;
     private final WebClient webClient;
     private AuthorizationsListSupplier authorizationsListSupplier;
     
-    public FederatedAuthorizationService(FederatedAuthorizationProperties federatedAuthorizationProperties, WebClient.Builder webClientBuilder,
+    public FederatedAuthorizationService(FederatedAuthorizationServiceProperties federatedAuthorizationProperties, WebClient.Builder webClientBuilder,
                     AuthorizationsListSupplier authorizationsListSupplier) {
         this.federatedAuthorizationProperties = federatedAuthorizationProperties;
         // @formatter:off
@@ -78,10 +81,12 @@ public class FederatedAuthorizationService implements UserOperations {
     }
     
     public AuthorizationsListBase listEffectiveAuthorizations(ProxiedUserDetails currentUser, boolean federate) throws AuthorizationException {
-        log.info("FederatedAuthorizationService listEffectiveAuthorizations for {}", currentUser.getPrimaryUser());
+        log.info("FederatedAuthorizationService listEffectiveAuthorizations (federate: {}) for {}", federate, currentUser.getPrimaryUser());
         
+        RetryTimeoutProperties retry = federatedAuthorizationProperties.getListEffectiveAuthorizations();
         try {
             // @formatter:off
+            @SuppressWarnings("unchecked")
             ResponseEntity<AuthorizationsListBase> authorizationsListBaseResponseEntity = (ResponseEntity<AuthorizationsListBase>) webClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("listEffectiveAuthorizations")
@@ -91,8 +96,18 @@ public class FederatedAuthorizationService implements UserOperations {
                     .header(ISSUERS_HEADER, getProxiedIssuers(currentUser))
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                     .retrieve()
+                    // don't retry on 4xx errors
+                    .onStatus(HttpStatus::is5xxServerError, clientResponse ->
+                            Mono.error(new ServiceException("Service Error", clientResponse.rawStatusCode())))
                     .toEntity(authorizationsListSupplier.get().getClass())
-                    .block(Duration.ofMillis(federatedAuthorizationProperties.getListEffectiveAuthorizationsTimeoutMillis()));
+                    .retryWhen(Retry
+                            .fixedDelay(retry.getRetries(), Duration.ofMillis(retry.getRetryDelayMillis()))
+                            .filter(throwable -> throwable instanceof ServiceException)
+                            .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
+                                throw new ServiceException("External Service failed to process after max retries",
+                                        HttpStatus.SERVICE_UNAVAILABLE.value());
+                            })))
+                    .block(Duration.ofMillis(retry.getTimeoutMillis()));
             // @formatter:on
             
             AuthorizationException authorizationException;
@@ -110,7 +125,7 @@ public class FederatedAuthorizationService implements UserOperations {
                                 "Unknown error occurred while calling listEffectiveAuthorizations for " + currentUser.getPrimaryUser());
             }
             throw authorizationException;
-        } catch (RuntimeException e) {
+        } catch (ServiceException e) {
             log.error("Timed out waiting for federated listEffectiveAuthorizations response");
             throw new AuthorizationException("Timed out waiting for federated listEffectiveAuthorizations response", e);
         }
@@ -122,6 +137,9 @@ public class FederatedAuthorizationService implements UserOperations {
     }
     
     public GenericResponse<String> flushCachedCredentials(ProxiedUserDetails currentUser, boolean federate) throws AuthorizationException {
+        log.info("FederatedAuthorizationService flushCachedCredentials (federate: {}) for {}", federate, currentUser.getPrimaryUser());
+        
+        RetryTimeoutProperties retry = federatedAuthorizationProperties.getFlushCachedCredentials();
         try {
             // @formatter:off
             ResponseEntity<GenericResponse> genericResponseEntity = webClient.get()
@@ -133,8 +151,18 @@ public class FederatedAuthorizationService implements UserOperations {
                     .header(ISSUERS_HEADER, getProxiedIssuers(currentUser))
                     .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                     .retrieve()
+                    // don't retry on 4xx errors
+                    .onStatus(HttpStatus::is5xxServerError,
+                            clientResponse -> Mono.error(new ServiceException("Service Error", clientResponse.rawStatusCode())))
                     .toEntity(GenericResponse.class)
-                    .block(Duration.ofMillis(federatedAuthorizationProperties.getFlushCachedCredentialsTimeoutMillis()));
+                    .retryWhen(Retry
+                            .fixedDelay(retry.getRetries(), Duration.ofMillis(retry.getRetryDelayMillis()))
+                            .filter(throwable -> throwable instanceof ServiceException)
+                            .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
+                                throw new ServiceException("External Service failed to process after max retries",
+                                        HttpStatus.SERVICE_UNAVAILABLE.value());
+                            })))
+                    .block(Duration.ofMillis(retry.getTimeoutMillis()));
             // @formatter:on
             
             AuthorizationException authorizationException;
@@ -152,9 +180,18 @@ public class FederatedAuthorizationService implements UserOperations {
                                 "Unknown error occurred while calling flushCachedCredentials for " + currentUser.getPrimaryUser());
             }
             throw authorizationException;
-        } catch (RuntimeException e) {
+        } catch (ServiceException e) {
             log.error("Timed out waiting for federated flushCachedCredentials response");
             throw new AuthorizationException("Timed out waiting for federated flushCachedCredentials response", e);
+        }
+    }
+    
+    public class ServiceException extends RuntimeException {
+        int statusCode;
+        
+        public ServiceException(String message, int statusCode) {
+            super(message);
+            this.statusCode = statusCode;
         }
     }
 }
