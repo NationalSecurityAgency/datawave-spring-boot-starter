@@ -13,6 +13,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
 import datawave.microservice.authorization.federation.config.FederatedAuthorizationServiceProperties;
@@ -20,7 +21,7 @@ import datawave.microservice.authorization.federation.config.FederatedAuthorizat
 /**
  * This class is used to dynamically create and register FederatedAuthorizationService beans via properties.
  */
-public class DynamicFederatedAuthorizationServiceBeanDefinitionRegistrar implements BeanDefinitionRegistryPostProcessor {
+public class DynamicFederatedAuthorizationServiceBeanDefinitionRegistrar implements BeanDefinitionRegistryPostProcessor, Ordered {
     
     public static final String FEDERATED_AUTHORIZATION_SERVICE_PREFIX = "datawave.authorization.federation.services";
     private final Map<String,FederatedAuthorizationServiceProperties> federatedAuthorizationProperties;
@@ -51,5 +52,13 @@ public class DynamicFederatedAuthorizationServiceBeanDefinitionRegistrar impleme
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
         // intentionally blank
+    }
+    @Override
+    public int getOrder() {
+        return getPrecedence();
+    }
+
+    public static int getPrecedence() {
+        return HIGHEST_PRECEDENCE;
     }
 }
