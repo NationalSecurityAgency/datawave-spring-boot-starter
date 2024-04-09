@@ -81,7 +81,7 @@ public class DatawaveServerProperties {
         private boolean allowCredentials = true;
         @NotEmpty
         private String[] allowedHeaders = new String[] {SUBJECT_DN_HEADER, ISSUER_DN_HEADER, ENTITIES_HEADER, ISSUERS_HEADER, HttpHeaders.ACCEPT,
-                HttpHeaders.ACCEPT_ENCODING};
+                HttpHeaders.ACCEPT_ENCODING, HttpHeaders.CONTENT_TYPE};
         @Positive
         private long maxAge = TimeUnit.DAYS.toSeconds(10);
         
