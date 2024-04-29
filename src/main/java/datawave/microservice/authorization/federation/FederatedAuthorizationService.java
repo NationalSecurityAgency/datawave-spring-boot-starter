@@ -83,31 +83,15 @@ public class FederatedAuthorizationService implements UserOperations {
     public AuthorizationsListBase listEffectiveAuthorizations(ProxiedUserDetails currentUser, boolean federate) throws AuthorizationException {
         log.info("FederatedAuthorizationService listEffectiveAuthorizations (federate: {}) for {}", federate, currentUser.getPrimaryUser());
         
-        RetryTimeoutProperties retry = federatedAuthorizationProperties.getListEffectiveAuthorizationsRetry();
         try {
             // @formatter:off
-            @SuppressWarnings("unchecked")
-            ResponseEntity<AuthorizationsListBase> authorizationsListBaseResponseEntity = (ResponseEntity<AuthorizationsListBase>) webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("listEffectiveAuthorizations")
-                            .queryParam("includeRemoteServices", federate)
-                            .build())
-                    .header(ENTITIES_HEADER, getProxiedEntities(currentUser))
-                    .header(ISSUERS_HEADER, getProxiedIssuers(currentUser))
-                    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                    .retrieve()
-                    // don't retry on 4xx errors
-                    .onStatus(HttpStatus::is5xxServerError, clientResponse ->
-                            Mono.error(new ServiceException("Service Error", clientResponse.rawStatusCode())))
-                    .toEntity(authorizationsListSupplier.get().getClass())
-                    .retryWhen(Retry
-                            .fixedDelay(retry.getRetries(), Duration.ofMillis(retry.getRetryDelayMillis()))
-                            .filter(throwable -> throwable instanceof ServiceException)
-                            .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
-                                throw new ServiceException("External Service failed to process after max retries",
-                                        HttpStatus.SERVICE_UNAVAILABLE.value());
-                            })))
-                    .block(Duration.ofMillis(retry.getTimeoutMillis()));
+            //noinspection rawtypes,unchecked
+            ResponseEntity<AuthorizationsListBase> authorizationsListBaseResponseEntity = (ResponseEntity<AuthorizationsListBase>) getResponseEntity(
+                    currentUser,
+                    federate,
+                    federatedAuthorizationProperties.getListEffectiveAuthorizationsRetry(),
+                    "listEffectiveAuthorizations",
+                    authorizationsListSupplier.get().getClass());
             // @formatter:on
             
             AuthorizationException authorizationException;
@@ -139,30 +123,15 @@ public class FederatedAuthorizationService implements UserOperations {
     public GenericResponse<String> flushCachedCredentials(ProxiedUserDetails currentUser, boolean federate) throws AuthorizationException {
         log.info("FederatedAuthorizationService flushCachedCredentials (federate: {}) for {}", federate, currentUser.getPrimaryUser());
         
-        RetryTimeoutProperties retry = federatedAuthorizationProperties.getFlushCachedCredentialsRetry();
         try {
             // @formatter:off
-            ResponseEntity<GenericResponse> genericResponseEntity = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("flushCachedCredentials")
-                            .queryParam("includeRemoteServices", federate)
-                            .build())
-                    .header(ENTITIES_HEADER, getProxiedEntities(currentUser))
-                    .header(ISSUERS_HEADER, getProxiedIssuers(currentUser))
-                    .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                    .retrieve()
-                    // don't retry on 4xx errors
-                    .onStatus(HttpStatus::is5xxServerError,
-                            clientResponse -> Mono.error(new ServiceException("Service Error", clientResponse.rawStatusCode())))
-                    .toEntity(GenericResponse.class)
-                    .retryWhen(Retry
-                            .fixedDelay(retry.getRetries(), Duration.ofMillis(retry.getRetryDelayMillis()))
-                            .filter(throwable -> throwable instanceof ServiceException)
-                            .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
-                                throw new ServiceException("External Service failed to process after max retries",
-                                        HttpStatus.SERVICE_UNAVAILABLE.value());
-                            })))
-                    .block(Duration.ofMillis(retry.getTimeoutMillis()));
+            //noinspection rawtypes,unchecked
+            ResponseEntity<GenericResponse> genericResponseEntity = (ResponseEntity<GenericResponse>)getResponseEntity(
+                    currentUser,
+                    federate,
+                    federatedAuthorizationProperties.getFlushCachedCredentialsRetry(),
+                    "flushCachedCredentials",
+                    GenericResponse.class);
             // @formatter:on
             
             AuthorizationException authorizationException;
@@ -184,6 +153,33 @@ public class FederatedAuthorizationService implements UserOperations {
             log.error("Timed out waiting for federated flushCachedCredentials response");
             throw new AuthorizationException("Timed out waiting for federated flushCachedCredentials response", e);
         }
+    }
+    
+    protected ResponseEntity<?> getResponseEntity(ProxiedUserDetails currentUser, boolean federate, RetryTimeoutProperties retry, String endpoint,
+                    Class entityClass) {
+        // @formatter:off
+        return (ResponseEntity<?>) webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(endpoint)
+                        .queryParam("includeRemoteServices", federate)
+                        .build())
+                .header(ENTITIES_HEADER, getProxiedEntities(currentUser))
+                .header(ISSUERS_HEADER, getProxiedIssuers(currentUser))
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .retrieve()
+                // don't retry on 4xx errors
+                .onStatus(HttpStatus::is5xxServerError,
+                        clientResponse -> Mono.error(new ServiceException("Service Error", clientResponse.rawStatusCode())))
+                .toEntity(entityClass)
+                .retryWhen(Retry
+                        .fixedDelay(retry.getRetries(), Duration.ofMillis(retry.getRetryDelayMillis()))
+                        .filter(throwable -> throwable instanceof ServiceException)
+                        .onRetryExhaustedThrow(((retryBackoffSpec, retrySignal) -> {
+                            throw new ServiceException("External Service failed to process after max retries",
+                                    HttpStatus.SERVICE_UNAVAILABLE.value());
+                        })))
+                .block(Duration.ofMillis(retry.getTimeoutMillis()));
+        // @formatter:on
     }
     
     public class ServiceException extends RuntimeException {
