@@ -4,6 +4,7 @@ import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filte
 import static datawave.microservice.authorization.preauth.ProxiedEntityX509Filter.ISSUERS_HEADER;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 import org.apache.http.HttpHeaders;
 import org.slf4j.Logger;
@@ -53,17 +54,17 @@ public class FederatedAuthorizationService implements UserOperations {
     }
     
     private String getProxiedEntities(ProxiedUserDetails currentUser) {
-        StringBuilder builder = new StringBuilder();
-        for (DatawaveUser user : currentUser.getProxiedUsers()) {
-            builder.append('<').append(user.getDn().subjectDN()).append('>');
-        }
-        return builder.toString();
+        return getProxiedDN(currentUser, (user) -> user.getDn().subjectDN());
     }
     
     private String getProxiedIssuers(ProxiedUserDetails currentUser) {
+        return getProxiedDN(currentUser, (user) -> user.getDn().issuerDN());
+    }
+    
+    private String getProxiedDN(ProxiedUserDetails currentUser, Function<DatawaveUser,String> getDN) {
         StringBuilder builder = new StringBuilder();
         for (DatawaveUser user : currentUser.getProxiedUsers()) {
-            builder.append('<').append(user.getDn().issuerDN()).append('>');
+            builder.append('<').append(getDN.apply(user)).append('>');
         }
         return builder.toString();
     }
