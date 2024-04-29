@@ -13,10 +13,10 @@ public class FederatedAuthorizationServiceProperties {
     private int maxBytesToBuffer = -1;
     
     @Valid
-    private RetryTimeoutProperties listEffectiveAuthorizations = new RetryTimeoutProperties();
+    private RetryTimeoutProperties listEffectiveAuthorizationsRetry = new RetryTimeoutProperties();
     
     @Valid
-    private RetryTimeoutProperties flushCachedCredentials = new RetryTimeoutProperties();
+    private RetryTimeoutProperties flushCachedCredentialsRetry = new RetryTimeoutProperties();
     
     public String getFederatedAuthorizationUri() {
         return federatedAuthorizationUri;
@@ -34,20 +34,20 @@ public class FederatedAuthorizationServiceProperties {
         this.maxBytesToBuffer = maxBytesToBuffer;
     }
     
-    public RetryTimeoutProperties getListEffectiveAuthorizations() {
-        return listEffectiveAuthorizations;
+    public RetryTimeoutProperties getListEffectiveAuthorizationsRetry() {
+        return listEffectiveAuthorizationsRetry;
     }
     
-    public void setListEffectiveAuthorizations(RetryTimeoutProperties listEffectiveAuthorizations) {
-        this.listEffectiveAuthorizations = listEffectiveAuthorizations;
+    public void setListEffectiveAuthorizationsRetry(RetryTimeoutProperties listEffectiveAuthorizationsRetry) {
+        this.listEffectiveAuthorizationsRetry = listEffectiveAuthorizationsRetry;
     }
     
-    public RetryTimeoutProperties getFlushCachedCredentials() {
-        return flushCachedCredentials;
+    public RetryTimeoutProperties getFlushCachedCredentialsRetry() {
+        return flushCachedCredentialsRetry;
     }
     
-    public void setFlushCachedCredentials(RetryTimeoutProperties flushCachedCredentials) {
-        this.flushCachedCredentials = flushCachedCredentials;
+    public void setFlushCachedCredentialsRetry(RetryTimeoutProperties flushCachedCredentialsRetry) {
+        this.flushCachedCredentialsRetry = flushCachedCredentialsRetry;
     }
     
     public class RetryTimeoutProperties {

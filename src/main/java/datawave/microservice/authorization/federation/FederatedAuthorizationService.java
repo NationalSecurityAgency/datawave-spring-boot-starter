@@ -83,7 +83,7 @@ public class FederatedAuthorizationService implements UserOperations {
     public AuthorizationsListBase listEffectiveAuthorizations(ProxiedUserDetails currentUser, boolean federate) throws AuthorizationException {
         log.info("FederatedAuthorizationService listEffectiveAuthorizations (federate: {}) for {}", federate, currentUser.getPrimaryUser());
         
-        RetryTimeoutProperties retry = federatedAuthorizationProperties.getListEffectiveAuthorizations();
+        RetryTimeoutProperties retry = federatedAuthorizationProperties.getListEffectiveAuthorizationsRetry();
         try {
             // @formatter:off
             @SuppressWarnings("unchecked")
@@ -139,7 +139,7 @@ public class FederatedAuthorizationService implements UserOperations {
     public GenericResponse<String> flushCachedCredentials(ProxiedUserDetails currentUser, boolean federate) throws AuthorizationException {
         log.info("FederatedAuthorizationService flushCachedCredentials (federate: {}) for {}", federate, currentUser.getPrimaryUser());
         
-        RetryTimeoutProperties retry = federatedAuthorizationProperties.getFlushCachedCredentials();
+        RetryTimeoutProperties retry = federatedAuthorizationProperties.getFlushCachedCredentialsRetry();
         try {
             // @formatter:off
             ResponseEntity<GenericResponse> genericResponseEntity = webClient.get()
