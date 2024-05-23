@@ -43,3 +43,15 @@ spring:
 server:
   servlet:
     context-path: /${spring.application.name}
+
+---
+
+spring:
+  config.activate.on-profile: 'federatedAuthorizationServiceTest'
+
+datawave:
+  authorization:
+    federation:
+      services:
+        FederatedAuthorizationService:
+          federatedAuthorizationUri: "https://authorization:8443/authorization/v2"
