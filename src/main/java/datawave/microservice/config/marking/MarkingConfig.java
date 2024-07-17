@@ -1,6 +1,7 @@
 package datawave.microservice.config.marking;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -22,12 +23,14 @@ public class MarkingConfig {
     
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(name = "datawave.defaults.MarkingFunctions.enabled", havingValue = "true", matchIfMissing = true)
     public MarkingFunctions markingFunctions() {
         return new MarkingFunctions.Default();
     }
     
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(name = "datawave.defaults.SecurityMarking.enabled", havingValue = "true", matchIfMissing = true)
     public SecurityMarking securityMarking() {
         return new ColumnVisibilitySecurityMarking();
     }
