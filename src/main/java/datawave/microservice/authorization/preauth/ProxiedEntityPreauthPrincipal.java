@@ -13,7 +13,7 @@ import datawave.security.authorization.SubjectIssuerDNPair;
  */
 public class ProxiedEntityPreauthPrincipal implements Serializable {
     private static final long serialVersionUID = 2806027352312288765L;
-
+    
     private final SubjectIssuerDNPair callerPrincipal;
     private final Collection<SubjectIssuerDNPair> proxiedEntities;
     private final String username;
