@@ -8,7 +8,7 @@
         <relativePath>../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>spring-boot-starter-datawave</artifactId>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.3-SNAPSHOT</version>
     <url>https://code.nsa.gov/datawave-spring-boot-starter</url>
     <licenses>
         <license>
@@ -26,7 +26,7 @@
         <version.accumulo>2.1.1</version.accumulo>
         <version.beanutils>1.9.4</version.beanutils>
         <version.datawave.accumulo-utils>4.0.0</version.datawave.accumulo-utils>
-        <version.datawave.authorization-api>4.0.0</version.datawave.authorization-api>
+        <version.datawave.authorization-api>4.0.1</version.datawave.authorization-api>
         <version.datawave.base-rest-responses>4.0.0</version.datawave.base-rest-responses>
         <version.datawave.cache-starter>4.0.0</version.datawave.cache-starter>
         <version.datawave.common-utils>3.0.0</version.datawave.common-utils>
