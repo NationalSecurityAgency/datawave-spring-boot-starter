@@ -160,7 +160,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>metrics-reporter</artifactId>
-                <version>${version.datawave.metrics.reporter}</version>
+                <version>${version.datawave.metrics-reporter}</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
