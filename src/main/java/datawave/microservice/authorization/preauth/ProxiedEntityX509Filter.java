@@ -153,7 +153,8 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
         
         if (certs != null && certs.length > 0) {
             if (logger.isDebugEnabled()) {
-                logger.debug("X.509 client authorization certificate: " + certs[0]);
+                logger.debug("X.509 client authorization certificate: [Subject DN: " + certs[0].getSubjectDN().getName() + ", Issuer DN: "
+                                + certs[0].getIssuerDN().getName() + "]");
             }
             
             return certs[0];
