@@ -27,6 +27,7 @@ import datawave.security.authorization.JWTTokenHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import reactor.netty.http.HttpOperations;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.TcpClient;
 
@@ -64,11 +65,11 @@ public class DatawaveMicroserviceConfig {
                     @Qualifier("outboundNettySslContext") SslContext nettySslContext, WebClient.Builder webClientBuilder,
                     @Value("${datawave.authorization.uri:https://authorization:8443/authorization/v1/authorize}") String authorizationUri) {
         // @formatter:off
-        TcpClient timeoutClient = TcpClient.create()
+        HttpClient timeoutClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000)
                 .doOnConnected(con -> con.addHandlerLast(new ReadTimeoutHandler(6)))
                 .secure(sslContextSpec -> sslContextSpec.sslContext(nettySslContext));
-        WebClient webClient = webClientBuilder.clone().clientConnector(new ReactorClientHttpConnector(HttpClient.from(timeoutClient))).build();
+        WebClient webClient = webClientBuilder.clone().clientConnector(new ReactorClientHttpConnector(timeoutClient)).build();
         // @formatter:on
         
         return new Supplier<>() {
