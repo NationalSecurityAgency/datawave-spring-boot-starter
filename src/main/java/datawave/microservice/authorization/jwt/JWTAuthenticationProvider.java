@@ -48,7 +48,7 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
                 return new JWTAuthentication(datawaveUserDetails);
             } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
                 throw new InvalidTokenException("JWT is not valid.", e);
-            } catch (SignatureException e) {
+            } catch (SecurityException e) {
                 throw new InvalidSignatureException("JWT signature validation failed", e);
             } catch (ExpiredJwtException e) {
                 throw new TokenExpiredException(e.getMessage(), e);
