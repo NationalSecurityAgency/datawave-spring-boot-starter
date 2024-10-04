@@ -128,7 +128,7 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
     }
     
     protected List<SubjectIssuerDNPair> getSubjectIssuerDNPairs(String proxiedSubjects, String proxiedIssuers) {
-        if (ObjectUtils.isEmpty(proxiedSubjects)) {
+        if (StringUtils.hasLength(proxiedSubjects)) {
             return null;
         } else {
             List<SubjectIssuerDNPair> proxiedEntities;

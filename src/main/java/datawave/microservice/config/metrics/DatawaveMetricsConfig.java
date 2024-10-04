@@ -34,10 +34,8 @@ public class DatawaveMetricsConfig extends MetricsConfigurerAdapter {
             ScheduledReporter reporter = factory.forRegistry(metricRegistry).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS)
                             .build(configProps.getHost(), configProps.getPort());
             registerReporter(reporter).start(configProps.getInterval(), configProps.getIntervalUnit());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Unable to instantiate metrics reporter factory class " + configProps.getFactoryClass() + ": " + e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Failed to instantiate MetricsReporterFactory class '" + configProps.getFactoryClass() + "': " + e.getMessage(), e);
         }
