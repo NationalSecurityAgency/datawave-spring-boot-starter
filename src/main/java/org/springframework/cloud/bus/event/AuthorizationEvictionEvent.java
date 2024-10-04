@@ -23,7 +23,7 @@ public class AuthorizationEvictionEvent extends RemoteApplicationEvent {
     }
     
     public AuthorizationEvictionEvent(Object source, String originService, String destinationService, Type evictionType, String substring) {
-        super(source, originService, destinationService);
+        super(source, originService, DEFAULT_DESTINATION_FACTORY.getDestination(destinationService));
         this.evictionType = evictionType;
         this.substring = substring;
     }

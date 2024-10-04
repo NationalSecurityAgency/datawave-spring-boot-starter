@@ -1,5 +1,6 @@
 package datawave.microservice.config.metrics;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.context.annotation.Configuration;
@@ -29,12 +30,14 @@ public class DatawaveMetricsConfig extends MetricsConfigurerAdapter {
     @Override
     public void configureReporters(MetricRegistry metricRegistry) {
         try {
-            MetricsReporterFactory factory = configProps.getFactoryClass().newInstance();
+            MetricsReporterFactory factory = configProps.getFactoryClass().getDeclaredConstructor().newInstance();
             ScheduledReporter reporter = factory.forRegistry(metricRegistry).convertRatesTo(TimeUnit.SECONDS).convertDurationsTo(TimeUnit.MILLISECONDS)
                             .build(configProps.getHost(), configProps.getPort());
             registerReporter(reporter).start(configProps.getInterval(), configProps.getIntervalUnit());
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Unable to instantiate metrics reporter factory class " + configProps.getFactoryClass() + ": " + e.getMessage(), e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to instantiate MetricsReporterFactory class '" + configProps.getFactoryClass() + "': " + e.getMessage(), e);
         }
     }
 }

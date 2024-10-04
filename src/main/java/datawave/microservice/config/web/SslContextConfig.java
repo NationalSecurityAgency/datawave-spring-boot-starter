@@ -171,7 +171,7 @@ public class SslContextConfig {
      * A custom {@link TrustManagerFactory} that wraps any returned {@link TrustManager}s in order to apply custom behavior for trusting a remote server.
      */
     private static class DatawaveTrustMangerFactory extends TrustManagerFactory {
-        private static final Provider PROVIDER = new Provider("", 0.0, "") {
+        private static final Provider PROVIDER = new Provider("", "0.0", "") {
             private static final long serialVersionUID = -2680540247105807895L;
         };
         private static final FastThreadLocal<DatawaveTrustManagerSpi> CURRENT_SPI = new FastThreadLocal<DatawaveTrustManagerSpi>() {
@@ -372,7 +372,7 @@ public class SslContextConfig {
     }
     
     private static class KeyAliasKeyManagerFactory extends KeyManagerFactory {
-        private static final Provider PROVIDER = new Provider("", 0.0, "") {
+        private static final Provider PROVIDER = new Provider("", "0.0", "") {
             private static final long serialVersionUID = -2680540247105807895L;
         };
         private static final FastThreadLocal<KeyAliasKeyManagerSpi> CURRENT_SPI = new FastThreadLocal<KeyAliasKeyManagerSpi>() {
