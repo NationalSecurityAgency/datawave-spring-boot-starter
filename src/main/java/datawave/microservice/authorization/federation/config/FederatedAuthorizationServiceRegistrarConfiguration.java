@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
+
 import datawave.microservice.authorization.federation.DynamicFederatedAuthorizationServiceBeanDefinitionRegistrar;
 
 @EnableCaching
@@ -19,6 +21,8 @@ public class FederatedAuthorizationServiceRegistrarConfiguration {
     
     @Bean
     public CacheManager remoteOperationsCacheManager() {
-        return new CaffeineCacheManager("getRemoteUser", "listEffectiveAuthorizations");
+        CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager("getRemoteUser", "listEffectiveAuthorizations");
+        caffeineCacheManager.setCaffeineSpec(CaffeineSpec.parse("maximumSize=1000, expireAfterAccess=5m, expireAfterWrite=5m"));
+        return caffeineCacheManager;
     }
 }
