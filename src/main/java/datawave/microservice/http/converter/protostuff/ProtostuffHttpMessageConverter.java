@@ -3,6 +3,7 @@ package datawave.microservice.http.converter.protostuff;
 import static org.springframework.util.Assert.state;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -55,10 +56,10 @@ public class ProtostuffHttpMessageConverter extends AbstractHttpMessageConverter
         if (PROTOSTUFF.isCompatibleWith(contentType)) {
             try {
                 // noinspection unchecked
-                Message<Object> msg = (Message<Object>) clazz.newInstance();
+                Message<Object> msg = (Message<Object>) clazz.getDeclaredConstructor().newInstance();
                 ProtostuffIOUtil.mergeFrom(inputMessage.getBody(), msg, msg.cachedSchema(), buffer.get());
                 return msg;
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 throw new HttpMessageNotReadableException("Unable to read protostuff message: " + e.getMessage(), e, inputMessage);
             }
         }

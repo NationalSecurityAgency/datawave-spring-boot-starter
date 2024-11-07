@@ -25,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import datawave.security.authorization.SubjectIssuerDNPair;
@@ -127,7 +128,7 @@ public class ProxiedEntityX509Filter extends AbstractPreAuthenticatedProcessingF
     }
     
     protected List<SubjectIssuerDNPair> getSubjectIssuerDNPairs(String proxiedSubjects, String proxiedIssuers) {
-        if (StringUtils.isEmpty(proxiedSubjects)) {
+        if (StringUtils.hasLength(proxiedSubjects)) {
             return null;
         } else {
             List<SubjectIssuerDNPair> proxiedEntities;
